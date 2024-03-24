@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+   mysql:
+      container_name: mysqldb
+      restart: always
+      image: mysql
+      environment:
+         MYSQL_DATABASE: 'blogdb'
+         MYSQL_USER: 'blog'
+         MYSQL_PASSWORD: '123456'
+         MYSQL_ROOT_PASSWORD: '12345678'
+      ports:
+         - '3306:3306'
+      networks:
+         - local
+
+   app:
+      depends_on:
+         - mysql
+      container_name: blog-api
+      build:
+         context: .
+         dockerfile: Dockerfile
+      volumes:
+         - ./:/home/app
+      ports:
+         - '4000:4000'
+      networks:
+         - local
+
+networks:
+   local:
+      name: local
