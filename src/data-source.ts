@@ -1,14 +1,20 @@
-import { DataSource } from 'typeorm';
-import 'reflect-metadata';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { Admin } from './database/models/admin.model';
+import { SeederOptions } from 'typeorm-extension';
+import { MainSeeder } from './seeders/main.seeder';
 
-export const appDataSource = new DataSource({
+const options: DataSourceOptions & SeederOptions = {
    type: 'mysql',
    host: 'mysql',
    port: 3306,
-   username: 'blog',
-   password: 'blog',
+   username: 'root',
+   password: 'root',
    database: 'blogdb',
-   logging: true,
+   logging: false,
    synchronize: false,
+   entities: [Admin],
+   seeds: [MainSeeder],
    connectTimeout: 60 * 60 * 1000,
-});
+};
+
+export const appDataSource = new DataSource(options);

@@ -11,7 +11,7 @@ app.use(router);
 
 appDataSource
    .initialize()
-   .then(async () => {
+   .then(() => {
       console.log('Connection with database established');
 
       app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
