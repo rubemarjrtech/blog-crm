@@ -13,7 +13,7 @@ export class Admin {
    username: string;
 
    @Column({
-      length: '45',
+      length: '200',
       nullable: false,
    })
    password: string;

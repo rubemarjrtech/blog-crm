@@ -5,13 +5,12 @@ import { MainSeeder } from './seeders/main.seeder';
 
 const options: DataSourceOptions & SeederOptions = {
    type: 'mysql',
-   host: 'mysql',
+   host: '172.27.0.2',
    port: 3306,
    username: 'root',
    password: 'root',
    database: 'blogdb',
-   logging: false,
-   synchronize: false,
+   synchronize: true,
    entities: [Admin],
    seeds: [MainSeeder],
    connectTimeout: 60 * 60 * 1000,
