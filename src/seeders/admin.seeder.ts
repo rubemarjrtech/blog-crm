@@ -12,8 +12,16 @@ export class AdminSeeder implements Seeder {
          password: await bcrypt.hash('teste', 10),
       };
 
-      const newAdmin = adminRepository.create(userData);
+      const alreadyExists = await adminRepository.findOne({
+         where: {
+            username: userData.username,
+         },
+      });
 
-      await adminRepository.save(newAdmin);
+      if (!alreadyExists) {
+         const newAdmin = adminRepository.create(userData);
+
+         await adminRepository.save(newAdmin);
+      }
    }
 }
