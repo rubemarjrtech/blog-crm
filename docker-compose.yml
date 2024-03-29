@@ -26,7 +26,7 @@ services:
          context: .
          dockerfile: Dockerfile
       environment:
-         DB_HOST: localhost
+         DB_HOST: mysql
          DB_USERNAME: blog
          DB_PASSWORD: blog
          DB_DATABASE: blogdb

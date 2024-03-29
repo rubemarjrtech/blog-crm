@@ -8,7 +8,7 @@ import { Member } from './database/models/member.model';
 
 const options: DataSourceOptions & SeederOptions = {
    type: 'mysql',
-   host: '172.27.0.2',
+   host: '172.22.0.3',
    port: 3306,
    username: 'root',
    password: 'root',
