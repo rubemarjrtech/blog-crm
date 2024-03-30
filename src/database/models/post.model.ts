@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Image } from './image.model';
 import { Member } from './member.model';
+import { Comment } from './comment.model';
 
 @Entity()
 export class Post {
@@ -44,4 +45,7 @@ export class Post {
 
    @OneToMany(() => Image, (image) => image.post)
    images!: Image[];
+
+   @OneToMany(() => Comment, (comment) => comment.post)
+   comments!: Comment[];
 }
