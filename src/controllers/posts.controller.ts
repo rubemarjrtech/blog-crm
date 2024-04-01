@@ -14,8 +14,36 @@ class PostController {
 
          await postRepository.save(newPost);
 
-         return res.status(statusCodes.CREATED).json({
+         res.status(statusCodes.CREATED).json({
             message: 'Post created!',
+         });
+      } catch (err) {
+         console.log(err);
+      }
+   }
+
+   async loadAllPosts(req: Request, res: Response) {
+      try {
+         const allPosts = await postRepository.find();
+
+         res.status(statusCodes.OK).json({
+            allPosts,
+         });
+      } catch (err) {
+         console.log(err);
+      }
+   }
+
+   async loadPostById(req: Request, res: Response) {
+      try {
+         const id = parseInt(req.params.id);
+
+         const post = await postRepository.findOneBy({
+            id,
+         });
+
+         res.status(statusCodes.OK).json({
+            post,
          });
       } catch (err) {
          console.log(err);
