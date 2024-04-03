@@ -4,20 +4,28 @@ import { Member } from '../database/models/member.model';
 
 export class MemberSeeder implements Seeder {
    async run(dataSource: DataSource): Promise<void> {
-      const memberRepository = dataSource.getRepository(Member);
+      const memberRepository = await dataSource.getRepository(Member);
 
       const memberData = {
-         full_name: 'ishimori rika',
-         zodiac_sign: 'bull',
-         birthdate: '13/01/2002',
-         height: 158.2,
-         birthplace: 'gunma',
-         blood_type: 'B',
-         image_url: 'ndfsiapisa',
+         full_name: 'mukai itoha',
+         zodiac_sign: 'pisces',
+         birthdate: '20/10/2002',
+         height: 161.3,
+         birthplace: 'hiroshima',
+         blood_type: 'A',
+         image_url: 'url.imagem.com',
       };
 
-      const newMember = memberRepository.create(memberData);
+      const alreadyExists = await memberRepository.findOne({
+         where: {
+            full_name: memberData.full_name,
+         },
+      });
 
-      await memberRepository.save(newMember);
+      if (!alreadyExists) {
+         const newMember = await memberRepository.create(memberData);
+
+         await memberRepository.save(newMember);
+      }
    }
 }

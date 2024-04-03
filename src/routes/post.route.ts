@@ -5,4 +5,5 @@ export const postRoutes = Router();
 
 postRoutes.post('/create-new-post', PostController.create);
 postRoutes.get('/', PostController.loadAllPosts);
-postRoutes.get('/:id', PostController.loadPostById);
+postRoutes.get('/:id', PostController.loadMemberPosts);
+postRoutes.get('/details/:id', PostController.loadPostDetails);

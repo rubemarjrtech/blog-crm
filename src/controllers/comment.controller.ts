@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 class CommentController {
    async create(req: Request, res: Response) {
       try {
-         const { id } = req.params;
+         const post_id = parseInt(req.params.id); // eslint-disable-line camelcase
          const { name, email, url, comment } = req.body;
 
          const newComment = await commentRepository.create({
@@ -13,7 +13,7 @@ class CommentController {
             email,
             url,
             comment,
-            id,
+            post_id, // eslint-disable-line camelcase
          });
 
          await commentRepository.save(newComment);

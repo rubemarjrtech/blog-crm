@@ -7,9 +7,9 @@ export class PostSeeder implements Seeder {
       const postRepository = dataSource.getRepository(Post);
 
       const userData = {
-         title: 'teste',
-         body: 'testetesteteste',
-         member_id: 1,
+         title: 'lalala',
+         body: 'randomness',
+         member_id: 2,
       };
 
       const newAdmin = postRepository.create(userData);
