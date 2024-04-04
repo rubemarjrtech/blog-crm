@@ -8,7 +8,7 @@ class CommentController {
          const post_id = parseInt(req.params.id); // eslint-disable-line camelcase
          const { name, email, url, comment } = req.body;
 
-         const newComment = await commentRepository.create({
+         const newComment = commentRepository.create({
             name,
             email,
             url,
@@ -18,7 +18,7 @@ class CommentController {
 
          await commentRepository.save(newComment);
 
-         return res.status(StatusCodes.CREATED).json({
+         res.status(StatusCodes.CREATED).json({
             message: 'Comment submitted!',
          });
       } catch (err) {

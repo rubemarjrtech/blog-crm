@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { postRepository } from '../database/repositories/post.repository';
-import statusCodes from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { Member } from '../database/models/member.model';
 import { appDataSource } from '../data-source';
 
@@ -16,7 +16,7 @@ class PostController {
 
          await postRepository.save(newPost);
 
-         res.status(statusCodes.CREATED).json({
+         res.status(StatusCodes.CREATED).json({
             message: 'Post created!',
          });
       } catch (err) {
@@ -24,11 +24,11 @@ class PostController {
       }
    }
 
-   async loadAllPosts(req: Request, res: Response) {
+   async loadAllPosts(_: Request, res: Response) {
       try {
          const allPosts = await postRepository.find();
 
-         res.status(statusCodes.OK).json({
+         res.status(StatusCodes.OK).json({
             allPosts,
          });
       } catch (err) {
@@ -46,7 +46,7 @@ class PostController {
                member: { id },
             },
          });
-         res.status(statusCodes.OK).json({
+         res.status(StatusCodes.OK).json({
             post,
          });
       } catch (err) {
@@ -64,23 +64,30 @@ class PostController {
             .where('post.id = :id', { id })
             .getOne();
 
-         if (post === null) {
-            return res.status(statusCodes.NOT_FOUND).json({
+         if (!post) {
+            return res.status(StatusCodes.NOT_FOUND).json({
                message: 'Blog not found.',
             });
          }
 
          // Retrieve member info
 
-         const member_id = post.member_id; // eslint-disable-line camelcase
-
          const member = await appDataSource.manager.findOneBy(Member, {
-            id: member_id, // eslint-disable-line camelcase
+            id: post.member_id, // eslint-disable-line camelcase
          });
 
-         res.status(statusCodes.OK).json({
+         if (!member) {
+            return res.status(StatusCodes.NOT_FOUND);
+         }
+         const memberDetails = {
+            id: member.id,
+            full_name: member.full_name,
+            image_url: member.image_url,
+         };
+
+         res.status(StatusCodes.OK).json({
             post,
-            member,
+            memberDetails,
          });
       } catch (err) {
          console.log(err);
