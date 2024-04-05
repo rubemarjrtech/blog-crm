@@ -24,12 +24,20 @@ class PostController {
       }
    }
 
-   async loadAllPosts(_: Request, res: Response) {
+   async loadAllPosts(req: Request, res: Response) {
       try {
-         const allPosts = await postRepository.find();
+         const page: number = parseInt(req.query.page as string) || 1;
+         const perPage: number = 12;
+
+         const posts = await postRepository
+            .createQueryBuilder('posts')
+            .orderBy('created_at', 'DESC')
+            .offset((page - 1) * perPage)
+            .limit(perPage)
+            .getMany();
 
          res.status(StatusCodes.OK).json({
-            allPosts,
+            posts,
          });
       } catch (err) {
          console.log(err);

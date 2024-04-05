@@ -1,6 +1,6 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { Admin } from '../database/models/admin.model';
+import { Admin } from '../../database/models/admin.model';
 import bcrypt from 'bcrypt';
 
 export class AdminSeeder implements Seeder {

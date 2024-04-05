@@ -1,6 +1,6 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { Post } from '../database/models/post.model';
+import { Post } from '../../database/models/post.model';
 
 export class PostSeeder implements Seeder {
    async run(dataSource: DataSource): Promise<void> {

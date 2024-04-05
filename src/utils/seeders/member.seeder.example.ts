@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import { Member } from '../database/models/member.model';
+import { Member } from '../../database/models/member.model';
 
 export class MemberSeeder implements Seeder {
    async run(dataSource: DataSource): Promise<void> {
