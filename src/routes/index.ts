@@ -6,5 +6,5 @@ import { commentRoutes } from './comment.route';
 export const router = Router();
 
 router.use(baseRoute);
-router.use('/posts', postRoutes);
+router.use('/diary/blog', postRoutes);
 router.use('/comment_add', commentRoutes);

@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(json());
-app.use(router);
+app.use('/api', router);
 
 appDataSource
    .initialize()

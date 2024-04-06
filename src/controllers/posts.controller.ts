@@ -3,6 +3,7 @@ import { postRepository } from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
 import { Member } from '../database/models/member.model';
 import { appDataSource } from '../data-source';
+import { memberRepository } from '../database/repositories/member.repository';
 
 class PostController {
    async create(req: Request, res: Response) {
@@ -28,6 +29,66 @@ class PostController {
       try {
          const page: number = parseInt(req.query.page as string) || 1;
          const perPage: number = 12;
+         const ct: number = parseInt(req.query.ct as string);
+         const id = ct;
+
+         if (ct) {
+            try {
+               const memberPosts = await postRepository.find({
+                  relations: ['member'],
+                  where: {
+                     member: { id },
+                  },
+                  order: {
+                     created_at: 'DESC',
+                  },
+                  skip: (page - 1) * perPage,
+                  take: perPage,
+               });
+
+               const saveInfo = memberPosts[0]['member']; // eslint-disable-line dot-notation
+
+               const blogOwnerInfo = {
+                  full_name: saveInfo.full_name,
+                  birthplace: saveInfo.birthplace,
+                  birthdate: saveInfo.birthdate,
+                  image_url: saveInfo.image_url,
+               };
+               const posts = memberPosts.map((currentPost) => {
+                  const post = {
+                     id: currentPost.id,
+                     title: currentPost.title,
+                     body: currentPost.body,
+                     created_at: currentPost.created_at,
+                  };
+
+                  return post;
+               });
+
+               const members = await memberRepository
+                  .createQueryBuilder('members')
+                  .orderBy('full_name', 'ASC')
+                  .getMany();
+
+               const membersDetails = members.map((currentMember) => {
+                  const currentMemberDetails = {
+                     id: currentMember.id,
+                     full_name: currentMember.full_name,
+                     image_url: currentMember.image_url,
+                  };
+
+                  return currentMemberDetails;
+               });
+
+               return res.status(StatusCodes.OK).json({
+                  blogOwnerInfo,
+                  posts,
+                  membersDetails,
+               });
+            } catch (err) {
+               console.log(err);
+            }
+         }
 
          const posts = await postRepository
             .createQueryBuilder('posts')
@@ -36,31 +97,31 @@ class PostController {
             .limit(perPage)
             .getMany();
 
+         const members = await memberRepository
+            .createQueryBuilder('members')
+            .orderBy('full_name', 'ASC')
+            .getMany();
+
+         const membersDetails = members.map((currentMember) => {
+            const currentMemberDetails = {
+               id: currentMember.id,
+               full_name: currentMember.full_name,
+               image_url: currentMember.image_url,
+            };
+
+            return currentMemberDetails;
+         });
+
          res.status(StatusCodes.OK).json({
             posts,
+            membersDetails,
          });
       } catch (err) {
          console.log(err);
       }
    }
 
-   async loadMemberPosts(req: Request, res: Response) {
-      try {
-         const id = parseInt(req.params.id);
-
-         const post = await postRepository.find({
-            relations: ['member'],
-            where: {
-               member: { id },
-            },
-         });
-         res.status(StatusCodes.OK).json({
-            post,
-         });
-      } catch (err) {
-         console.log(err);
-      }
-   }
+   async loadMemberPosts() {}
 
    async loadPostDetails(req: Request, res: Response) {
       try {
