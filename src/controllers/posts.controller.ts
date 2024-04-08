@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { postRepository } from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
-import { memberRepository } from '../database/repositories/member.repository';
 import { AllMembersInfo, PostOwnerInfo } from '../utils/memberInfo/member.info';
 
 export class PostController {
@@ -50,20 +49,7 @@ export class PostController {
 
          // Retrieve and display all members info
 
-         const members = await memberRepository
-            .createQueryBuilder('members')
-            .orderBy('full_name', 'ASC')
-            .getMany();
-
-         const membersDetails = members.map((currentMember) => {
-            const currentMemberDetails = {
-               id: currentMember.id,
-               full_name: currentMember.full_name,
-               image_url: currentMember.image_url,
-            };
-
-            return currentMemberDetails;
-         });
+         const membersDetails = await AllMembersInfo();
 
          res.status(StatusCodes.OK).json({
             posts,
@@ -79,23 +65,17 @@ export class PostController {
       page: number,
       perPage: number,
    ) => {
-      const [memberPosts, members] = await Promise.all([
-         await postRepository.find({
-            relations: ['member'],
-            where: {
-               member: { id },
-            },
-            order: {
-               created_at: 'DESC',
-            },
-            skip: (page - 1) * perPage,
-            take: perPage,
-         }),
-         await memberRepository
-            .createQueryBuilder('members')
-            .orderBy('full_name', 'ASC')
-            .getMany(),
-      ]);
+      const memberPosts = await postRepository.find({
+         relations: ['member'],
+         where: {
+            member: { id },
+         },
+         order: {
+            created_at: 'DESC',
+         },
+         skip: (page - 1) * perPage,
+         take: perPage,
+      });
 
       const saveInfo = memberPosts[0]['member']; // eslint-disable-line dot-notation
 
@@ -117,15 +97,9 @@ export class PostController {
          return post;
       });
 
-      const membersDetails = members.map((currentMember) => {
-         const currentMemberDetails = {
-            id: currentMember.id,
-            full_name: currentMember.full_name,
-            image_url: currentMember.image_url,
-         };
+      // Retrieve and display all members info
 
-         return currentMemberDetails;
-      });
+      const membersDetails = await AllMembersInfo();
 
       return {
          blogOwnerInfo,
@@ -150,17 +124,47 @@ export class PostController {
             });
          }
 
-         // Retrieve post owner info
+         // Retrieve last 10 posts from all members and post owner
+
+         const lastTenPosts = await postRepository
+            .createQueryBuilder('posts')
+            .orderBy('created_at', 'DESC')
+            .limit(10)
+            .getMany();
+
+         const memberPosts = await postRepository.find({
+            relations: ['member'],
+            where: {
+               member: { id: post.member_id },
+            },
+            order: {
+               created_at: 'DESC',
+            },
+            take: 10,
+         });
+
+         const lastTenBlogOwnerPosts = memberPosts.map((currentPost) => {
+            const post = {
+               id: currentPost.id,
+               title: currentPost.title,
+               body: currentPost.body,
+               created_at: currentPost.created_at,
+            };
+
+            return post;
+         });
+
+         // Retrieve post owner info all members info
 
          const singleMemberDetails = await PostOwnerInfo(post.member_id);
-
-         // Retrieve and display all members info
 
          const membersDetails = await AllMembersInfo();
 
          res.status(StatusCodes.OK).json({
             post,
             singleMemberDetails,
+            lastTenBlogOwnerPosts,
+            lastTenPosts,
             membersDetails,
          });
       } catch (err) {
