@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import { postRepository } from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
-import { Member } from '../database/models/member.model';
-import { appDataSource } from '../data-source';
 import { memberRepository } from '../database/repositories/member.repository';
+import { AllMembersInfo, PostOwnerInfo } from '../utils/memberInfo/member.info';
 
-class PostController {
+export class PostController {
    async create(req: Request, res: Response) {
       try {
          const { title, body } = req.body;
@@ -25,7 +24,7 @@ class PostController {
       }
    }
 
-   async loadAllPosts(req: Request, res: Response) {
+   loadAllPosts = async (req: Request, res: Response) => {
       try {
          const page: number = parseInt(req.query.page as string) || 1;
          const perPage: number = 12;
@@ -34,59 +33,11 @@ class PostController {
 
          if (ct) {
             try {
-               const memberPosts = await postRepository.find({
-                  relations: ['member'],
-                  where: {
-                     member: { id },
-                  },
-                  order: {
-                     created_at: 'DESC',
-                  },
-                  skip: (page - 1) * perPage,
-                  take: perPage,
-               });
+               const data = await this.loadSingleMemberPosts(id, page, perPage);
 
-               const saveInfo = memberPosts[0]['member']; // eslint-disable-line dot-notation
-
-               const blogOwnerInfo = {
-                  full_name: saveInfo.full_name,
-                  birthplace: saveInfo.birthplace,
-                  birthdate: saveInfo.birthdate,
-                  image_url: saveInfo.image_url,
-               };
-               const posts = memberPosts.map((currentPost) => {
-                  const post = {
-                     id: currentPost.id,
-                     title: currentPost.title,
-                     body: currentPost.body,
-                     created_at: currentPost.created_at,
-                  };
-
-                  return post;
-               });
-
-               const members = await memberRepository
-                  .createQueryBuilder('members')
-                  .orderBy('full_name', 'ASC')
-                  .getMany();
-
-               const membersDetails = members.map((currentMember) => {
-                  const currentMemberDetails = {
-                     id: currentMember.id,
-                     full_name: currentMember.full_name,
-                     image_url: currentMember.image_url,
-                  };
-
-                  return currentMemberDetails;
-               });
-
-               return res.status(StatusCodes.OK).json({
-                  blogOwnerInfo,
-                  posts,
-                  membersDetails,
-               });
+               return res.status(StatusCodes.OK).json(data);
             } catch (err) {
-               console.log(err);
+               return console.log(err);
             }
          }
 
@@ -96,6 +47,8 @@ class PostController {
             .offset((page - 1) * perPage)
             .limit(perPage)
             .getMany();
+
+         // Retrieve and display all members info
 
          const members = await memberRepository
             .createQueryBuilder('members')
@@ -119,9 +72,67 @@ class PostController {
       } catch (err) {
          console.log(err);
       }
-   }
+   };
 
-   async loadMemberPosts() {}
+   loadSingleMemberPosts = async (
+      id: number,
+      page: number,
+      perPage: number,
+   ) => {
+      const [memberPosts, members] = await Promise.all([
+         await postRepository.find({
+            relations: ['member'],
+            where: {
+               member: { id },
+            },
+            order: {
+               created_at: 'DESC',
+            },
+            skip: (page - 1) * perPage,
+            take: perPage,
+         }),
+         await memberRepository
+            .createQueryBuilder('members')
+            .orderBy('full_name', 'ASC')
+            .getMany(),
+      ]);
+
+      const saveInfo = memberPosts[0]['member']; // eslint-disable-line dot-notation
+
+      const blogOwnerInfo = {
+         full_name: saveInfo.full_name,
+         birthplace: saveInfo.birthplace,
+         birthdate: saveInfo.birthdate,
+         image_url: saveInfo.image_url,
+      };
+
+      const posts = memberPosts.map((currentPost) => {
+         const post = {
+            id: currentPost.id,
+            title: currentPost.title,
+            body: currentPost.body,
+            created_at: currentPost.created_at,
+         };
+
+         return post;
+      });
+
+      const membersDetails = members.map((currentMember) => {
+         const currentMemberDetails = {
+            id: currentMember.id,
+            full_name: currentMember.full_name,
+            image_url: currentMember.image_url,
+         };
+
+         return currentMemberDetails;
+      });
+
+      return {
+         blogOwnerInfo,
+         posts,
+         membersDetails,
+      };
+   };
 
    async loadPostDetails(req: Request, res: Response) {
       try {
@@ -139,29 +150,21 @@ class PostController {
             });
          }
 
-         // Retrieve member info
+         // Retrieve post owner info
 
-         const member = await appDataSource.manager.findOneBy(Member, {
-            id: post.member_id, // eslint-disable-line camelcase
-         });
+         const singleMemberDetails = await PostOwnerInfo(post.member_id);
 
-         if (!member) {
-            return res.status(StatusCodes.NOT_FOUND);
-         }
-         const memberDetails = {
-            id: member.id,
-            full_name: member.full_name,
-            image_url: member.image_url,
-         };
+         // Retrieve and display all members info
+
+         const membersDetails = await AllMembersInfo();
 
          res.status(StatusCodes.OK).json({
             post,
-            memberDetails,
+            singleMemberDetails,
+            membersDetails,
          });
       } catch (err) {
          console.log(err);
       }
    }
 }
-
-export default new PostController();

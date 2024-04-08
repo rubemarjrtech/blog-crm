@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import PostController from '../controllers/posts.controller';
+import { PostController } from '../controllers/posts.controller';
+
+const postController = new PostController();
 
 export const postRoutes = Router();
 
-postRoutes.post('/create-new-post', PostController.create);
-postRoutes.get('/list', PostController.loadAllPosts);
-postRoutes.get('/details/:id', PostController.loadPostDetails);
+postRoutes.post('/create-new-post', postController.create);
+postRoutes.get('/list', postController.loadAllPosts);
+postRoutes.get('/details/:id', postController.loadPostDetails);
