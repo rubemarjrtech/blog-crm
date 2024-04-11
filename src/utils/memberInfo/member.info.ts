@@ -2,21 +2,13 @@ import { appDataSource } from '../../data-source';
 import { Member } from '../../database/models/member.model';
 import { memberRepository } from '../../database/repositories/member.repository';
 
-type singleMemberProps = {
+type MemberProps = {
    id: number;
    full_name: string;
    image_url: string;
 };
 
-type AllMembersProps = {
-   id: number;
-   full_name: string;
-   image_url: string;
-};
-
-export async function PostOwnerInfo(
-   id: number,
-): Promise<singleMemberProps | null> {
+export async function PostOwnerInfo(id: number): Promise<MemberProps | null> {
    try {
       const member = await appDataSource.manager.findOneBy(Member, {
          id, // eslint-disable-line camelcase
@@ -34,7 +26,7 @@ export async function PostOwnerInfo(
    }
 }
 
-export async function AllMembersInfo(): Promise<AllMembersProps[] | null> {
+export async function AllMembersInfo(): Promise<MemberProps[] | null> {
    try {
       const members = await memberRepository
          .createQueryBuilder('members')
