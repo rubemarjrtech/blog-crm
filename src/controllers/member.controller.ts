@@ -37,4 +37,20 @@ export class MemberController {
          members,
       });
    }
+
+   async loadSingleMember(req: Request, res: Response) {
+      const id = parseInt(req.params.id);
+
+      const findMemberAndPosts = await memberRepository
+         .createQueryBuilder('member')
+         .innerJoinAndSelect('member.posts', 'posts')
+         .where('member.id = :id', { id })
+         .orderBy('posts.created_at', 'DESC')
+         .limit(4)
+         .getMany();
+
+      res.status(StatusCodes.OK).json({
+         findMemberAndPosts,
+      });
+   }
 }

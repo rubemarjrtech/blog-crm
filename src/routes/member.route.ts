@@ -6,3 +6,4 @@ const memberController = new MemberController();
 export const memberRoutes = Router();
 
 memberRoutes.get('/', memberController.loadAllMembers);
+memberRoutes.get('/:id', memberController.loadSingleMember);
