@@ -43,7 +43,8 @@ export class MemberController {
 
       const findMemberAndPosts = await memberRepository
          .createQueryBuilder('member')
-         .innerJoinAndSelect('member.posts', 'posts')
+         .leftJoinAndSelect('member.posts', 'posts')
+         .leftJoinAndSelect('posts.images', 'images')
          .where('member.id = :id', { id })
          .orderBy('posts.created_at', 'DESC')
          .limit(4)

@@ -2,18 +2,36 @@ import { Request, Response } from 'express';
 import { postRepository } from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
 import { AllMembersInfo, PostOwnerInfo } from '../utils/memberInfo/member.info';
+import { imageRepository } from '../database/repositories/image.repository';
 
 export class PostController {
    async create(req: Request, res: Response) {
       try {
+         const files = req.files as any[]; // eslint-disable-line
          const { title, body } = req.body;
 
-         const newPost = await postRepository.create({
+         const newPost = postRepository.create({
             title,
             body,
+            member_id: 6,
          });
 
-         await postRepository.save(newPost);
+         const seePost = await postRepository.save(newPost);
+
+         if (files && files.length > 0) {
+            files.map(async (file) => {
+               try {
+                  const result = imageRepository.create({
+                     path: file.path,
+                     post_id: seePost.id,
+                  });
+
+                  await imageRepository.save(result);
+               } catch (err) {
+                  return console.log(err);
+               }
+            });
+         }
 
          res.status(StatusCodes.CREATED).json({
             message: 'Post created!',
