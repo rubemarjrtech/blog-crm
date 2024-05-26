@@ -29,11 +29,17 @@ export class Post {
    })
    body: string;
 
+   @Column({
+      type: 'text',
+      nullable: true,
+   })
+   thumbnail: string;
+
    @CreateDateColumn({
       type: 'timestamp',
       default: () => 'CURRENT_TIMESTAMP(6)',
    })
-   public created_at: Date;
+   created_at: Date;
 
    @Column()
    @Index()
