@@ -5,11 +5,11 @@ import { v4 } from 'uuid';
 export default {
    storage: multer.diskStorage({
       destination: resolve(__dirname, '..', '..', '..', 'uploads'),
-      filename: function (req, file, cb) {
+      filename: function (_, file, cb) {
          return cb(null, v4() + extname(file.originalname));
       },
    }),
-   fileFilter: (req, file, cb) => {
+   fileFilter: (_, file, cb) => {
       if (!file.mimetype.match(/png||jpeg||jpg||gif$i/)) {
          cb(new Error('invalid image format!'));
          return;

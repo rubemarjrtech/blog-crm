@@ -8,7 +8,6 @@ import {
    JoinColumn,
    Index,
 } from 'typeorm';
-import { Image } from './image.model';
 import { Member } from './member.model';
 import { Comment } from './comment.model';
 
@@ -20,18 +19,21 @@ export class Post {
    @Column({
       type: 'text',
       nullable: false,
+      length: 650,
    })
    title: string;
 
    @Column({
       type: 'longtext',
       nullable: false,
+      length: 8000,
    })
    body: string;
 
    @Column({
       type: 'text',
       nullable: true,
+      length: 850,
    })
    thumbnail: string;
 
@@ -48,9 +50,6 @@ export class Post {
    @ManyToOne(() => Member, (member) => member.posts)
    @JoinColumn({ name: 'member_id', referencedColumnName: 'id' })
    member!: Member;
-
-   @OneToMany(() => Image, (image) => image.post)
-   images!: Image[];
 
    @OneToMany(() => Comment, (comment) => comment.post)
    comments!: Comment[];
