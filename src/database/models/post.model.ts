@@ -19,21 +19,21 @@ export class Post {
    @Column({
       type: 'text',
       nullable: false,
-      length: 650,
+      length: '650',
    })
    title: string;
 
    @Column({
       type: 'longtext',
       nullable: false,
-      length: 8000,
+      length: '6000',
    })
    body: string;
 
    @Column({
       type: 'text',
       nullable: true,
-      length: 850,
+      length: '850',
    })
    thumbnail: string;
 
@@ -41,14 +41,14 @@ export class Post {
       type: 'timestamp',
       default: () => 'CURRENT_TIMESTAMP(6)',
    })
-   created_at: Date;
+   createdAt: Date;
 
    @Column()
    @Index()
-   member_id!: number;
+   memberId!: number;
 
    @ManyToOne(() => Member, (member) => member.posts)
-   @JoinColumn({ name: 'member_id', referencedColumnName: 'id' })
+   @JoinColumn({ name: 'memberId', referencedColumnName: 'id' })
    member!: Member;
 
    @OneToMany(() => Comment, (comment) => comment.post)

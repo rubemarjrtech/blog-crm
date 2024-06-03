@@ -1,5 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from 'typeorm';
 import { Post } from './post.model';
+import { Image } from './image.model';
 
 @Entity()
 export class Member {
@@ -10,12 +11,12 @@ export class Member {
       length: '65',
       nullable: false,
    })
-   full_name: string;
+   fullName: string;
 
    @Column({
       nullable: true,
    })
-   zodiac_sign: string;
+   zodiacSign: string;
 
    @Column({
       nullable: false,
@@ -35,14 +36,17 @@ export class Member {
       length: '10',
       nullable: false,
    })
-   blood_type: string;
+   bloodType: string;
 
    @Column({
       length: '500',
       nullable: true,
    })
-   image_url: string;
+   imageUrl: string;
 
    @OneToMany(() => Post, (posts) => posts.member)
    posts!: Post[];
+
+   @OneToMany(() => Image, (images) => images.member)
+   images!: Image[];
 }

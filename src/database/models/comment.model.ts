@@ -27,20 +27,22 @@ export class Comment {
 
    @Column({
       nullable: true,
+      length: '650',
    })
    url: string;
 
    @Column({
       type: 'longtext',
       nullable: false,
+      length: '3000',
    })
    comment: string;
 
    @Column()
    @Index()
-   post_id!: number;
+   postId!: number;
 
    @ManyToOne(() => Post, (post) => post.comments)
-   @JoinColumn({ name: 'post_id', referencedColumnName: 'id' })
+   @JoinColumn({ name: 'postId', referencedColumnName: 'id' })
    post!: Post;
 }
