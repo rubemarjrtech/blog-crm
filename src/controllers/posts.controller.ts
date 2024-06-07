@@ -1,51 +1,44 @@
 import { Request, Response } from 'express';
-import { postRepository } from '../database/repositories/post.repository';
+import {
+   PostRepository,
+   postModel,
+} from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
-import { AllMembersInfo, PostOwnerInfo } from '../utils/memberInfo/member.info';
-import { imageRepository } from '../database/repositories/image.repository';
+import * as memberInfo from '../utils/memberInfo/member.info';
+import { BodyRequest } from './types';
+import { PostService } from '../services/post.service';
+import { PostProps } from '../entities/post.entity';
 
 export class PostController {
-   async create(req: Request, res: Response) {
+   public async create(req: BodyRequest<PostProps>, res: Response) {
       try {
-         const files = req.files as any[]; // eslint-disable-line
-         const { title, body } = req.body;
+         const { title, body, thumbnail } = req.body;
 
-         const newPost = postRepository.create({
+         const postRepository = new PostRepository(postModel);
+         const postService = new PostService(postRepository);
+
+         const createdPost = await postService.create({
             title,
             body,
-            member_id: 6,
+            thumbnail,
          });
 
-         const seePost = await postRepository.save(newPost);
-
-         if (files && files.length > 0) {
-            files.map(async (file) => {
-               try {
-                  const result = imageRepository.create({
-                     path: file.path,
-                     post_id: seePost.id,
-                  });
-
-                  await imageRepository.save(result);
-               } catch (err) {
-                  return console.log(err);
-               }
-            });
-         }
-
          res.status(StatusCodes.CREATED).json({
-            message: 'Post created!',
+            createdPost,
          });
       } catch (err) {
          console.log(err);
+         res.status(StatusCodes.BAD_REQUEST).send({
+            message: 'error creating post',
+         });
       }
    }
 
-   loadAllPosts = async (req: Request, res: Response) => {
+   public loadAllPosts = async (req: Request, res: Response) => {
       try {
-         const page: number = parseInt(req.query.page as string) || 1;
-         const perPage: number = 12;
-         const ct: number = parseInt(req.query.ct as string);
+         const page = parseInt(req.query.page as string) || 1;
+         const perPage = 12;
+         const ct = parseInt(req.query.ct as string);
          const id = ct;
 
          if (ct) {
@@ -58,7 +51,7 @@ export class PostController {
             }
          }
 
-         const posts = await postRepository
+         const posts = await postModel
             .createQueryBuilder('posts')
             .orderBy('created_at', 'DESC')
             .offset((page - 1) * perPage)
@@ -67,7 +60,7 @@ export class PostController {
 
          // Retrieve and display all members info
 
-         const membersDetails = await AllMembersInfo();
+         const membersDetails = await memberInfo.AllMembersInfo();
 
          res.status(StatusCodes.OK).json({
             posts,
@@ -78,18 +71,18 @@ export class PostController {
       }
    };
 
-   loadSingleMemberPosts = async (
+   private loadSingleMemberPosts = async (
       id: number,
       page: number,
       perPage: number,
    ) => {
-      const memberPosts = await postRepository.find({
+      const memberPosts = await postModel.find({
          relations: ['member'],
          where: {
             member: { id },
          },
          order: {
-            created_at: 'DESC',
+            createdAt: 'DESC',
          },
          skip: (page - 1) * perPage,
          take: perPage,
@@ -98,10 +91,10 @@ export class PostController {
       const saveInfo = memberPosts[0]['member']; // eslint-disable-line dot-notation
 
       const blogOwnerInfo = {
-         full_name: saveInfo.full_name,
+         full_name: saveInfo.fullName,
          birthplace: saveInfo.birthplace,
          birthdate: saveInfo.birthdate,
-         image_url: saveInfo.image_url,
+         image_url: saveInfo.imageUrl,
       };
 
       const posts = memberPosts.map((currentPost) => {
@@ -109,7 +102,7 @@ export class PostController {
             id: currentPost.id,
             title: currentPost.title,
             body: currentPost.body,
-            created_at: currentPost.created_at,
+            created_at: currentPost.createdAt,
          };
 
          return post;
@@ -117,7 +110,7 @@ export class PostController {
 
       // Retrieve and display all members info
 
-      const membersDetails = await AllMembersInfo();
+      const membersDetails = await memberInfo.AllMembersInfo();
 
       return {
          blogOwnerInfo,
@@ -130,7 +123,7 @@ export class PostController {
       try {
          const id = parseInt(req.params.id);
 
-         const post = await postRepository
+         const post = await postModel
             .createQueryBuilder('post')
             .leftJoinAndSelect('post.comments', 'comment')
             .where('post.id = :id', { id })
@@ -144,19 +137,19 @@ export class PostController {
 
          // Retrieve last 10 posts from all members and post owner
 
-         const lastTenPosts = await postRepository
+         const lastTenPosts = await postModel
             .createQueryBuilder('posts')
             .orderBy('created_at', 'DESC')
             .limit(10)
             .getMany();
 
-         const memberPosts = await postRepository.find({
+         const memberPosts = await postModel.find({
             relations: ['member'],
             where: {
-               member: { id: post.member_id },
+               member: { id: post.memberId },
             },
             order: {
-               created_at: 'DESC',
+               createdAt: 'DESC',
             },
             take: 10,
          });
@@ -166,7 +159,7 @@ export class PostController {
                id: currentPost.id,
                title: currentPost.title,
                body: currentPost.body,
-               created_at: currentPost.created_at,
+               created_at: currentPost.createdAt,
             };
 
             return post;
@@ -174,9 +167,11 @@ export class PostController {
 
          // Retrieve post owner info all members info
 
-         const singleMemberDetails = await PostOwnerInfo(post.member_id);
+         const singleMemberDetails = await memberInfo.PostOwnerInfo(
+            post.memberId,
+         );
 
-         const membersDetails = await AllMembersInfo();
+         const membersDetails = await memberInfo.AllMembersInfo();
 
          res.status(StatusCodes.OK).json({
             post,

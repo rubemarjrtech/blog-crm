@@ -4,7 +4,7 @@ import { router } from './routes';
 import { appDataSource } from './data-source';
 
 const app = express();
-const PORT = 3000;
+const PORT = 4000;
 
 app.use(json());
 app.use('/api', router);
