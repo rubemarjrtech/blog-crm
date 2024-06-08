@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
-import {
-   PostRepository,
-   postModel,
-} from '../database/repositories/post.repository';
+import { postModel } from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
 import * as memberInfo from '../utils/memberInfo/member.info';
 import { BodyRequest } from './types';
@@ -10,14 +7,16 @@ import { PostService } from '../services/post.service';
 import { PostProps } from '../entities/post.entity';
 
 export class PostController {
-   public async create(req: BodyRequest<PostProps>, res: Response) {
+   constructor(private postService: PostService) {} // eslint-disable-line
+
+   public create = async (
+      req: BodyRequest<PostProps>,
+      res: Response,
+   ): Promise<void> => {
       try {
          const { title, body, thumbnail } = req.body;
 
-         const postRepository = new PostRepository(postModel);
-         const postService = new PostService(postRepository);
-
-         const createdPost = await postService.create({
+         const createdPost = await this.postService.create({
             title,
             body,
             thumbnail,
@@ -32,7 +31,7 @@ export class PostController {
             message: 'error creating post',
          });
       }
-   }
+   };
 
    public loadAllPosts = async (req: Request, res: Response) => {
       try {

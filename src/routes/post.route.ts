@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { PostController } from '../controllers/posts.controller';
+import { PostFactory } from '../factories/post.factory';
 
-const postController = new PostController();
+const postController = new PostController(PostFactory.getServiceInstance());
 
 export const postRoutes = Router();
 

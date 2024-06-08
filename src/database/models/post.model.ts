@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { Member } from './member.model';
 import { Comment } from './comment.model';
-
 @Entity()
 export class Post {
    @PrimaryGeneratedColumn()
@@ -19,21 +18,18 @@ export class Post {
    @Column({
       type: 'text',
       nullable: false,
-      length: '650',
    })
    title: string;
 
    @Column({
       type: 'longtext',
       nullable: false,
-      length: '6000',
    })
    body: string;
 
    @Column({
       type: 'text',
       nullable: true,
-      length: '850',
    })
    thumbnail: string;
 
