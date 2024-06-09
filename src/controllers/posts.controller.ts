@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-import { postModel } from '../database/repositories/post.repository';
 import { StatusCodes } from 'http-status-codes';
-import * as memberInfo from '../utils/memberInfo/member.info';
 import { BodyRequest } from './types';
 import { PostService } from '../services/post.service';
 import { PostProps } from '../entities/post.entity';
@@ -14,12 +12,13 @@ export class PostController {
       res: Response,
    ): Promise<void> => {
       try {
-         const { title, body, thumbnail } = req.body;
+         const { title, body, thumbnail, memberId } = req.body;
 
          const createdPost = await this.postService.create({
             title,
             body,
             thumbnail,
+            memberId,
          });
 
          res.status(StatusCodes.CREATED).json({
@@ -33,154 +32,75 @@ export class PostController {
       }
    };
 
-   public loadAllPosts = async (req: Request, res: Response) => {
+   public loadAllPosts = async (
+      req: Request,
+      res: Response,
+   ): Promise<Response> => {
       try {
          const page = parseInt(req.query.page as string) || 1;
          const perPage = 12;
          const ct = parseInt(req.query.ct as string);
          const id = ct;
 
+         // filter posts by member
          if (ct) {
-            try {
-               const data = await this.loadSingleMemberPosts(id, page, perPage);
+            const singleMemberPosts = await this.postService.loadAll(
+               page,
+               perPage,
+               id,
+            );
 
-               return res.status(StatusCodes.OK).json(data);
-            } catch (err) {
-               return console.log(err);
-            }
+            return res.status(StatusCodes.OK).json(singleMemberPosts);
          }
 
-         const posts = await postModel
-            .createQueryBuilder('posts')
-            .orderBy('created_at', 'DESC')
-            .offset((page - 1) * perPage)
-            .limit(perPage)
-            .getMany();
+         const posts = await this.postService.loadAll(page, perPage);
 
-         // Retrieve and display all members info
-
-         const membersDetails = await memberInfo.AllMembersInfo();
-
-         res.status(StatusCodes.OK).json({
-            posts,
-            membersDetails,
-         });
+         return res.status(StatusCodes.OK).json(posts);
       } catch (err) {
          console.log(err);
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            message: 'Something went wrong',
+         });
       }
    };
 
-   private loadSingleMemberPosts = async (
-      id: number,
-      page: number,
-      perPage: number,
-   ) => {
-      const memberPosts = await postModel.find({
-         relations: ['member'],
-         where: {
-            member: { id },
-         },
-         order: {
-            createdAt: 'DESC',
-         },
-         skip: (page - 1) * perPage,
-         take: perPage,
-      });
-
-      const saveInfo = memberPosts[0]['member']; // eslint-disable-line dot-notation
-
-      const blogOwnerInfo = {
-         full_name: saveInfo.fullName,
-         birthplace: saveInfo.birthplace,
-         birthdate: saveInfo.birthdate,
-         image_url: saveInfo.imageUrl,
-      };
-
-      const posts = memberPosts.map((currentPost) => {
-         const post = {
-            id: currentPost.id,
-            title: currentPost.title,
-            body: currentPost.body,
-            created_at: currentPost.createdAt,
-         };
-
-         return post;
-      });
-
-      // Retrieve and display all members info
-
-      const membersDetails = await memberInfo.AllMembersInfo();
-
-      return {
-         blogOwnerInfo,
-         posts,
-         membersDetails,
-      };
-   };
-
-   async loadPostDetails(req: Request, res: Response) {
+   public loadPostDetails = async (
+      req: Request,
+      res: Response,
+   ): Promise<Response> => {
       try {
          const id = parseInt(req.params.id);
 
-         const post = await postModel
-            .createQueryBuilder('post')
-            .leftJoinAndSelect('post.comments', 'comment')
-            .where('post.id = :id', { id })
-            .getOne();
+         const postDetails = await this.postService.loadPostDetails(id);
 
-         if (!post) {
+         if (!postDetails) {
             return res.status(StatusCodes.NOT_FOUND).json({
-               message: 'Blog not found.',
+               message: 'Post not found',
             });
          }
 
-         // Retrieve last 10 posts from all members and post owner
-
-         const lastTenPosts = await postModel
-            .createQueryBuilder('posts')
-            .orderBy('created_at', 'DESC')
-            .limit(10)
-            .getMany();
-
-         const memberPosts = await postModel.find({
-            relations: ['member'],
-            where: {
-               member: { id: post.memberId },
-            },
-            order: {
-               createdAt: 'DESC',
-            },
-            take: 10,
-         });
-
-         const lastTenBlogOwnerPosts = memberPosts.map((currentPost) => {
-            const post = {
-               id: currentPost.id,
-               title: currentPost.title,
-               body: currentPost.body,
-               created_at: currentPost.createdAt,
-            };
-
-            return post;
-         });
-
-         // Retrieve post owner info all members info
-
-         const singleMemberDetails = await memberInfo.PostOwnerInfo(
-            post.memberId,
-         );
-
-         const membersDetails = await memberInfo.AllMembersInfo();
-
-         res.status(StatusCodes.OK).json({
-            post,
-            singleMemberDetails,
-            lastTenBlogOwnerPosts,
-            lastTenPosts,
-            membersDetails,
-         });
+         return res.status(StatusCodes.OK).json(postDetails);
       } catch (err) {
          console.log(err);
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            message: 'Something went wrong',
+         });
       }
-   }
+   };
+
+   public loadMostRecentAll = async (
+      _: Request,
+      res: Response,
+   ): Promise<Response> => {
+      try {
+         const mostRecentPosts = await this.postService.loadMostRecentAll();
+
+         return res.status(StatusCodes.OK).json(mostRecentPosts);
+      } catch (err) {
+         console.log(err);
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
 }
