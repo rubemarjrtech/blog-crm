@@ -14,6 +14,7 @@ export class Member {
    fullName: string;
 
    @Column({
+      length: '50',
       nullable: true,
    })
    zodiacSign: string;
