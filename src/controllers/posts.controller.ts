@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { BodyRequest } from './types';
 import { PostService } from '../services/post.service';
-import { PostProps } from '../entities/post.entity';
+import { PostTypes } from '../entities/post.entity';
 
 export class PostController {
    constructor(private postService: PostService) {} // eslint-disable-line
 
    public create = async (
-      req: BodyRequest<PostProps>,
+      req: BodyRequest<PostTypes>,
       res: Response,
    ): Promise<void> => {
       try {
@@ -96,6 +96,24 @@ export class PostController {
          const mostRecentPosts = await this.postService.loadMostRecentAll();
 
          return res.status(StatusCodes.OK).json(mostRecentPosts);
+      } catch (err) {
+         console.log(err);
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
+
+   public loadMostRecentSingle = async (
+      req: Request,
+      res: Response,
+   ): Promise<Response> => {
+      try {
+         const id = parseInt(req.params.id);
+
+         const mostRecent = await this.postService.loadMostRecentSingle(id);
+
+         return res.status(StatusCodes.OK).json(mostRecent);
       } catch (err) {
          console.log(err);
          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

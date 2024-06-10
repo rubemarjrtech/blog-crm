@@ -10,3 +10,4 @@ postRoutes.post('/create', postController.create);
 postRoutes.get('/', postController.loadAllPosts);
 postRoutes.get('/recent', postController.loadMostRecentAll);
 postRoutes.get('/:id', postController.loadPostDetails);
+postRoutes.get('/recent/:id', postController.loadMostRecentSingle);

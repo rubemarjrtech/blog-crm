@@ -1,6 +1,9 @@
 import { Post } from '../database/models/post.model';
-import { PostRepository } from '../database/repositories/post.repository';
-import { PostProps, PostEntity } from '../entities/post.entity';
+import {
+   PartialPost,
+   PostRepository,
+} from '../database/repositories/post.repository';
+import { PostTypes, PostEntity } from '../entities/post.entity';
 
 export class PostService {
    constructor(private postRepository: PostRepository) {} // eslint-disable-line
@@ -10,7 +13,7 @@ export class PostService {
       body,
       thumbnail,
       memberId,
-   }: PostProps): Promise<Post> {
+   }: PostTypes): Promise<Post> {
       const newPost = new PostEntity({ title, body, thumbnail, memberId });
 
       const createdPost = await this.postRepository.create(newPost);
@@ -38,9 +41,15 @@ export class PostService {
       return postDetails;
    }
 
-   public async loadMostRecentAll(): Promise<Post[]> {
+   public async loadMostRecentAll(): Promise<PartialPost[]> {
       const mostRecentPosts = await this.postRepository.loadMostRecentAll();
 
       return mostRecentPosts;
+   }
+
+   public async loadMostRecentSingle(id: number): Promise<PartialPost[]> {
+      const mostRecent = await this.postRepository.loadMostRecentSingle(id);
+
+      return mostRecent;
    }
 }

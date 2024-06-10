@@ -1,4 +1,4 @@
-export interface PostProps {
+export interface PostTypes {
    title: string;
    body: string;
    thumbnail?: string;
@@ -11,7 +11,7 @@ export class PostEntity {
    thumbnail?: string;
    memberId: number;
 
-   constructor({ title, body, thumbnail, memberId }: PostProps) {
+   constructor({ title, body, thumbnail, memberId }: PostTypes) {
       this.title = title;
       this.body = body;
       this.thumbnail = thumbnail;

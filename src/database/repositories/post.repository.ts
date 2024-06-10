@@ -1,8 +1,14 @@
 import { appDataSource } from '../../data-source';
 import { Post } from '../models/post.model';
-import { PostEntity } from '../../entities/post.entity';
+import { PostEntity, PostTypes } from '../../entities/post.entity';
 
 const getPostRepository = appDataSource.getRepository(Post);
+
+export interface PartialPost extends Omit<PostTypes, 'body' | 'memberId'> {
+   id: number;
+   createdAt: Date;
+   fullName: string;
+}
 
 export class PostRepository {
    constructor(private postModel = getPostRepository) {} // eslint-disable-line
@@ -84,13 +90,46 @@ export class PostRepository {
       return postDetails;
    }
 
-   public async loadMostRecentAll(): Promise<Post[]> {
-      const mostRecentPosts = await this.postModel
+   public async loadMostRecentAll(): Promise<PartialPost[]> {
+      const posts = await this.postModel
          .createQueryBuilder('posts')
          .orderBy('createdAt', 'DESC')
+         .leftJoinAndSelect('posts.member', 'member')
          .limit(10)
          .getMany();
 
+      const mostRecentPosts = this.normalizeMostRecentPosts(posts);
+
       return mostRecentPosts;
+   }
+
+   public async loadMostRecentSingle(id: number): Promise<PartialPost[]> {
+      const posts = await this.postModel
+         .createQueryBuilder('posts')
+         .where('memberId = :id', { id })
+         .orderBy('createdAt', 'DESC')
+         .limit(10)
+         .leftJoinAndSelect('posts.member', 'member')
+         .getMany();
+
+      const mostRecent = this.normalizeMostRecentPosts(posts);
+
+      return mostRecent;
+   }
+
+   private normalizeMostRecentPosts(posts: Post[]): PartialPost[] {
+      const mostRecent = posts.map((post) => {
+         const normalized = {
+            id: post.id,
+            title: post.title,
+            createdAt: post.createdAt,
+            fullName: post.member.fullName,
+            thumbnail: post.thumbnail,
+         };
+
+         return normalized;
+      });
+
+      return mostRecent;
    }
 }
