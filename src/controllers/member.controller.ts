@@ -1,12 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { memberRepository } from '../database/repositories/member.repository';
-import { Post } from '../database/models/post.model';
-import { imageRepository } from '../database/repositories/image.repository';
 import { MemberService } from '../services/member.service';
 
 export interface QueryParamValues {
-   display: 'blood' | 'birthdate' | 'syllabary' | 'constellation';
+   display?: 'bloodType' | 'birthdate' | 'fullName' | 'zodiacSign';
 }
 
 export class MemberController {
@@ -17,7 +14,7 @@ export class MemberController {
       res: Response,
    ): Promise<Response> => {
       try {
-         const sortMethod: Record<string, unknown> = {
+         const sortMethod: QueryParamValues = {
             ...(req.query.display === 'blood' && {
                display: 'bloodType',
             }),
@@ -51,41 +48,29 @@ export class MemberController {
       }
    };
 
-   public async loadSingleMember(req: Request, res: Response) {
-      const id = parseInt(req.params.id);
+   public loadSingleMember = async (
+      req: Request,
+      res: Response,
+   ): Promise<Response> => {
+      try {
+         const id = parseInt(req.params.id);
 
-      const findMemberAndPosts = await memberRepository
-         .createQueryBuilder('member')
-         .leftJoinAndSelect(
-            (qb) =>
-               qb
-                  .select()
-                  .from(Post, 'p')
-                  .where('p.member_id = :id', { id })
-                  .orderBy({ 'p.created_at': 'DESC' })
-                  .limit(4),
-            'p',
-            'p.member_id = member.id',
-         )
-         .where('member.id = :id', { id })
-         .getRawMany();
+         const findMemberAndPosts =
+            await this.memberService.loadSingleMember(id);
 
-      const ids: number[] = [];
+         if (!findMemberAndPosts) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+               message: 'Member not found',
+            });
+         }
 
-      for (const item of findMemberAndPosts) {
-         ids.push(item.id);
+         return res.status(StatusCodes.OK).json(findMemberAndPosts);
+      } catch (err) {
+         console.log(err);
+
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            message: 'Something went wrong',
+         });
       }
-
-      const imagesFromPosts = await imageRepository
-         .createQueryBuilder('images')
-         .where('images.post_id IN (:...post_id)', {
-            post_id: ids,
-         })
-         .getMany();
-
-      res.status(StatusCodes.OK).json({
-         findMemberAndPosts,
-         imagesFromPosts,
-      });
-   }
+   };
 }

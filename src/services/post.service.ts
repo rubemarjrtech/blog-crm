@@ -1,8 +1,5 @@
 import { Post } from '../database/models/post.model';
-import {
-   PartialPost,
-   PostRepository,
-} from '../database/repositories/post.repository';
+import { PostRepository } from '../database/repositories/post.repository';
 import { PostTypes, PostEntity } from '../entities/post.entity';
 
 export class PostService {
@@ -41,13 +38,13 @@ export class PostService {
       return postDetails;
    }
 
-   public async loadMostRecentAll(): Promise<PartialPost[]> {
+   public async loadMostRecentAll(): Promise<Post[]> {
       const mostRecentPosts = await this.postRepository.loadMostRecentAll();
 
       return mostRecentPosts;
    }
 
-   public async loadMostRecentSingle(id: number): Promise<PartialPost[]> {
+   public async loadMostRecentSingle(id: number): Promise<Post[]> {
       const mostRecent = await this.postRepository.loadMostRecentSingle(id);
 
       return mostRecent;
