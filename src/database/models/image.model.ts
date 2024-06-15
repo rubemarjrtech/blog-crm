@@ -16,7 +16,6 @@ export class Image {
    @Column({
       type: 'text',
       nullable: false,
-      length: '650',
    })
    path: string;
 
