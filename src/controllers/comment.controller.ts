@@ -1,30 +1,38 @@
 import { Request, Response } from 'express';
-import { commentRepository } from '../database/repositories/comment.repository';
 import { StatusCodes } from 'http-status-codes';
+import { CommentService } from '../services/comment.service';
 
-class CommentController {
-   async create(req: Request, res: Response) {
+export class CommentController {
+   constructor(private commentService: CommentService) {} // eslint-disable-line
+
+   public create = async (req: Request, res: Response): Promise<Response> => {
       try {
-         const post_id = parseInt(req.params.id); // eslint-disable-line camelcase
+         const postId = parseInt(req.params.id);
          const { name, email, url, comment } = req.body;
 
-         const newComment = commentRepository.create({
+         const newComment = await this.commentService.create({
             name,
             email,
             url,
             comment,
-            post_id, // eslint-disable-line camelcase
+            postId,
          });
 
-         await commentRepository.save(newComment);
+         if (!newComment) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+               message: 'Something went wrong',
+            });
+         }
 
-         res.status(StatusCodes.CREATED).json({
+         return res.status(StatusCodes.CREATED).json({
             message: 'Comment submitted!',
          });
       } catch (err) {
          console.log(err);
-      }
-   }
-}
 
-export default new CommentController();
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
+}

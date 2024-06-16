@@ -1,3 +1,7 @@
 node_modules
 ReadME.md
 .env
+admin.seeder.ts
+member.seeder.ts
+post.seeder.ts
+factories

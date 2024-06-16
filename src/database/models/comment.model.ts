@@ -34,7 +34,6 @@ export class Comment {
    @Column({
       type: 'longtext',
       nullable: false,
-      length: '3000',
    })
    comment: string;
 
