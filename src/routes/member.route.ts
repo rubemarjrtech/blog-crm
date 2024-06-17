@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { MemberController } from '../controllers/member.controller';
-import { MemberFactory } from '../factories/member.factory';
+import { MemberFactory } from '../factory/member.factory';
 
 const memberController = new MemberController(
    MemberFactory.getServiceInstance(),

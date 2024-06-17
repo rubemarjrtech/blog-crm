@@ -8,4 +8,6 @@ const commentController = new CommentController(
 
 export const commentRoutes = Router();
 
-commentRoutes.post('/:id', commentController.create);
+commentRoutes.post('/create/:id', commentController.create);
+commentRoutes.get('/:id', commentController.loadCommentsForPost);
+commentRoutes.delete('/delete/:id', commentController.deleteComment);

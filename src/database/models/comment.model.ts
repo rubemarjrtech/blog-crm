@@ -5,6 +5,7 @@ import {
    ManyToOne,
    JoinColumn,
    Index,
+   CreateDateColumn,
 } from 'typeorm';
 import { Post } from './post.model';
 
@@ -36,6 +37,12 @@ export class Comment {
       nullable: false,
    })
    comment: string;
+
+   @CreateDateColumn({
+      type: 'timestamp',
+      default: () => 'CURRENT_TIMESTAMP(6)',
+   })
+   createdAt: Date;
 
    @Column()
    @Index()

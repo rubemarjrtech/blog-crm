@@ -1,3 +1,4 @@
+import { Comment } from '../database/models/comment.model';
 import { CommentRepository } from '../database/repositories/comment.repository';
 import { CommentEntity } from '../entities/comment.entity';
 
@@ -22,5 +23,23 @@ export class CommentService {
       await this.commentRepository.create(newComment);
 
       return 'Comment added successfully!';
+   }
+
+   public async loadCommentsForPost(
+      postId: number,
+      page: number,
+   ): Promise<Comment[]> {
+      const comments = await this.commentRepository.loadCommentsForPost(
+         postId,
+         page,
+      );
+
+      return comments;
+   }
+
+   public async deleteComment(id: string): Promise<string | null> {
+      const deletedComment = await this.commentRepository.deleteComment(id);
+
+      return deletedComment;
    }
 }
