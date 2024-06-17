@@ -9,6 +9,6 @@ export const router = Router();
 
 router.use(baseRoute);
 router.use('/post', postRoutes);
-router.use('/comment_add', commentRoutes);
+router.use('/comment', commentRoutes);
 router.use('/member', memberRoutes);
 router.use('/image', imageRoutes);

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { ImageController } from '../controllers/image.controller';
 import multerConfig from '../config/multer/multer.config';
 import multer from 'multer';
-import { ImageFactory } from '../factories/image.factory';
+import { ImageFactory } from '../factory/image.factory';
 
 export const imageRoutes = Router();
 const imageController = new ImageController(ImageFactory.getImageService());
