@@ -1,31 +1,42 @@
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
 import { Member } from '../../database/models/member.model';
+import bcrypt from 'bcrypt';
+import { Users } from '../../database/models/users.model';
 
 export class MemberSeeder implements Seeder {
    async run(dataSource: DataSource): Promise<void> {
-      const memberRepository = await dataSource.getRepository(Member);
+      const memberRepository = dataSource.getRepository(Member);
+      const userRepository = dataSource.getRepository(Users);
 
       const memberData = {
-         full_name: '',
-         zodiac_sign: '',
+         fullName: '',
+         zodiacSign: '',
          birthdate: '',
          height: 0,
          birthplace: '',
-         blood_type: '',
-         image_url: '',
+         bloodType: '',
+         imageUrl: '',
       };
 
       const alreadyExists = await memberRepository.findOne({
          where: {
-            full_name: memberData.full_name,
+            fullName: memberData.fullName,
          },
       });
 
       if (!alreadyExists) {
          const newMember = memberRepository.create(memberData);
 
-         await memberRepository.save(newMember);
+         const memberLoginData = {
+            username: '',
+            password: await bcrypt.hash('', 10),
+            member: newMember,
+         };
+
+         const newUser = userRepository.create(memberLoginData);
+
+         await userRepository.save(newUser);
       }
    }
 }
