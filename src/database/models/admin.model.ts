@@ -7,13 +7,13 @@ export class Admin {
 
    @Column({
       unique: true,
-      length: '45',
+      length: '250',
       nullable: false,
    })
    username: string;
 
    @Column({
-      length: '200',
+      length: '450',
       nullable: false,
    })
    password: string;

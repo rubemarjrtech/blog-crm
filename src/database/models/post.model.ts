@@ -39,6 +39,9 @@ export class Post {
    })
    createdAt: Date;
 
+   @Column({ default: 'Waiting for approval' })
+   status: string;
+
    @Column()
    @Index()
    memberId!: number;
