@@ -9,12 +9,12 @@ import {
 import { Member } from './member.model';
 
 @Entity()
-export class Users {
+export class User {
    @PrimaryColumn()
    userId!: number;
 
    @OneToOne(() => Member, { cascade: true })
-   @JoinColumn({ name: 'userId' })
+   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
    member: Member;
 
    @BeforeInsert()

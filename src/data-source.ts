@@ -8,7 +8,7 @@ import { Member } from './database/models/member.model';
 import { Comment } from './database/models/comment.model';
 import 'dotenv/config';
 import { PostsFactory } from './utils/factories/post.factory';
-import { Users } from './database/models/users.model';
+import { User } from './database/models/user.model';
 
 const port = process.env.DB_PORT as number | undefined;
 
@@ -20,7 +20,7 @@ const options: DataSourceOptions & SeederOptions = {
    password: process.env.DB_PASSWORD,
    database: process.env.DB_DATABASE,
    synchronize: true,
-   entities: [Admin, Image, Post, Member, Comment, Users],
+   entities: [Admin, Image, Post, Member, Comment, User],
    seeds: [MainSeeder],
    factories: [PostsFactory],
    connectTimeout: 60 * 60 * 1000,
