@@ -1,17 +1,15 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserRepository } from '../database/repositories/user.repository';
 import { UserService } from '../services/user.service';
 
 export class UserController {
-   public async login(req: Request, res: Response): Promise<Response> {
+   constructor(private userService: UserService) {} // eslint-disable-line
+
+   public login = async (req: Request, res: Response): Promise<Response> => {
       try {
          const { username, password } = req.body;
 
-         const userRepository = new UserRepository();
-         const userService = new UserService(userRepository);
-
-         const userToken = await userService.login(username, password);
+         const userToken = await this.userService.login(username, password);
 
          if (!userToken) {
             return res.status(StatusCodes.BAD_REQUEST).json({
@@ -27,5 +25,5 @@ export class UserController {
             message: 'Something went wrong',
          });
       }
-   }
+   };
 }

@@ -2,10 +2,10 @@ import { appDataSource } from '../../data-source';
 import AuthService from '../../services/auth.service';
 import { User } from '../models/user.model';
 
-const getUserRepository = appDataSource.getRepository(User);
+const userRepository = appDataSource.getRepository(User);
 
 export class UserRepository {
-   constructor(private userModel = getUserRepository) {} // eslint-disable-line
+   constructor(private userModel = userRepository) {} // eslint-disable-line
 
    public async login(
       username: string,
