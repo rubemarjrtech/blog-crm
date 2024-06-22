@@ -11,6 +11,7 @@ export type MemberPosts = {
    member: Partial<Member>;
    posts: Partial<Post>[];
 };
+
 export class MemberRepository {
    constructor(private memberModel = memberRepository) {} // eslint-disable-line
 
