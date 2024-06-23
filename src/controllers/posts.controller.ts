@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { BodyRequest } from './types';
 import { PostService } from '../services/post.service';
-import { PostTypes } from '../entities/post.entity';
+import { createPostDTO } from '../DTOs/post.dto';
 
 export class PostController {
    constructor(private postService: PostService) {} // eslint-disable-line
 
    public create = async (
-      req: BodyRequest<PostTypes>,
+      req: BodyRequest<createPostDTO>,
       res: Response,
    ): Promise<void> => {
       try {

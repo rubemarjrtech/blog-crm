@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { CommentController } from '../controllers/comment.controller';
 import { CommentFactory } from '../factory/comment.factory';
+import { QueryType, validator } from '../middlewares/validation.middleware';
+import { createCommentSchema } from '../DTOs/comment.dto';
 
 const commentController = new CommentController(
    CommentFactory.getCommentService(),
@@ -8,6 +10,10 @@ const commentController = new CommentController(
 
 export const commentRoutes = Router();
 
-commentRoutes.post('/create/:id', commentController.create);
+commentRoutes.post(
+   '/create/:id',
+   validator({ schema: createCommentSchema, type: QueryType.BODY }),
+   commentController.create,
+);
 commentRoutes.get('/:id', commentController.loadCommentsForPost);
 commentRoutes.delete('/delete/:id', commentController.deleteComment);
