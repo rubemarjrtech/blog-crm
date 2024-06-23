@@ -2,7 +2,8 @@ import { User } from '../database/models/user.model';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-interface Payload extends Omit<User, 'member' | 'newid' | 'password'> {}
+export interface DecodedUser
+   extends Omit<User, 'member' | 'newid' | 'password'> {}
 
 export default class AuthService {
    public static async hashPassword(
@@ -23,7 +24,7 @@ export default class AuthService {
       return jwt.sign(payload, 'mysecret', { expiresIn: '5D' });
    }
 
-   public static validateToken(token: string): Payload {
-      return jwt.verify(token, 'mysecret') as Payload;
+   public static validateToken(token: string): DecodedUser {
+      return jwt.verify(token, 'mysecret') as DecodedUser;
    }
 }
