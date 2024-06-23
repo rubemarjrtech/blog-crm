@@ -12,22 +12,29 @@ export class PostController {
       res: Response,
    ): Promise<void> => {
       try {
-         const { title, body, thumbnail, memberId } = req.body;
+         const { title, body, thumbnail } = req.body;
+         const user = req.decoded;
 
          const createdPost = await this.postService.create({
             title,
             body,
             thumbnail,
-            memberId,
+            memberId: user!.userId,
          });
 
-         res.status(StatusCodes.CREATED).json({
-            createdPost,
-         });
+         const post = {
+            id: createdPost.id,
+            title: createdPost.title,
+            body: createdPost.body,
+            thumbnail: createdPost.thumbnail,
+            status: createdPost.status,
+         };
+
+         res.status(StatusCodes.CREATED).json(post);
       } catch (err) {
          console.log(err);
-         res.status(StatusCodes.BAD_REQUEST).send({
-            message: 'error creating post',
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            message: 'Something went wrong',
          });
       }
    };

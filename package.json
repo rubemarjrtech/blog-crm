@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "description": "Blog project for writing, recording and sharing whatever you want to talk about.",
    "scripts": {
-      "dev": "ts-node-dev ./src/server.ts",
+      "dev": "ts-node-dev --transpile-only ./src/server.ts",
       "lint": "eslint ./ --fix",
       "seed:run": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d src/data-source.ts"
    },
@@ -41,6 +41,7 @@
       "reflect-metadata": "^0.2.1",
       "typeorm": "^0.3.20",
       "typeorm-extension": "^3.5.0",
-      "uuid": "^9.0.1"
+      "uuid": "^9.0.1",
+      "zod": "^3.23.8"
    }
 }
