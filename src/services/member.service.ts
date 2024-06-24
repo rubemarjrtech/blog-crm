@@ -1,4 +1,3 @@
-import { QueryParamValues } from '../controllers/member.controller';
 import { Member } from '../database/models/member.model';
 import {
    MemberRepository,
@@ -8,9 +7,7 @@ import {
 export class MemberService {
    constructor(private memberRepository: MemberRepository) {} // eslint-disable-line
 
-   public async loadAllMembers(
-      sortMethod?: QueryParamValues,
-   ): Promise<Member[]> {
+   public async loadAllMembers(sortMethod?: string): Promise<Member[]> {
       const allMember = await this.memberRepository.loadAllMembers(sortMethod);
 
       return allMember;

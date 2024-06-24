@@ -1,35 +1,20 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { MemberService } from '../services/member.service';
-
-export interface QueryParamValues {
-   display?: 'bloodType' | 'birthdate' | 'fullName' | 'zodiacSign';
-}
+import { QueryRequest } from './types';
+import { loadAllMembersDTO } from '../DTOs/member.dto';
 
 export class MemberController {
    constructor(private memberService: MemberService) {} // eslint-disable-line
 
    public loadAllMembers = async (
-      req: Request,
+      req: QueryRequest<loadAllMembersDTO>,
       res: Response,
    ): Promise<Response> => {
       try {
-         const sortMethod: QueryParamValues = {
-            ...(req.query.display === 'blood' && {
-               display: 'bloodType',
-            }),
-            ...(req.query.display === 'birthdate' && {
-               display: 'birthdate',
-            }),
-            ...(req.query.display === 'syllabary' && {
-               display: 'fullName',
-            }),
-            ...(req.query.display === 'constellation' && {
-               display: 'zodiacSign',
-            }),
-         };
+         const sortMethod = req.query.display;
 
-         if (Object.keys(sortMethod).length) {
+         if (sortMethod) {
             const allMembersSorted =
                await this.memberService.loadAllMembers(sortMethod);
 

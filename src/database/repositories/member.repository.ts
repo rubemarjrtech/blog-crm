@@ -1,4 +1,3 @@
-import { QueryParamValues } from '../../controllers/member.controller';
 import { appDataSource } from '../../data-source';
 import { Member } from '../models/member.model';
 import { Post } from '../models/post.model';
@@ -15,9 +14,7 @@ export type MemberPosts = {
 export class MemberRepository {
    constructor(private memberModel = memberRepository) {} // eslint-disable-line
 
-   public async loadAllMembers(
-      sortMethod?: QueryParamValues,
-   ): Promise<Member[]> {
+   public async loadAllMembers(sortMethod?: string): Promise<Member[]> {
       if (sortMethod) {
          const allMembersOrdered = await this.OrderAllMembers(sortMethod);
 
@@ -32,13 +29,11 @@ export class MemberRepository {
       return allMembers;
    }
 
-   private async OrderAllMembers(
-      sortMethod: QueryParamValues,
-   ): Promise<Member[]> {
+   private async OrderAllMembers(sortMethod: string): Promise<Member[]> {
       const allMembers = await this.memberModel
          .createQueryBuilder('member')
          .select(['member.id', 'member.imageUrl', 'member.fullName'])
-         .orderBy(`${sortMethod.display}`, 'ASC')
+         .orderBy(sortMethod, 'ASC')
          .getMany();
 
       return allMembers;
