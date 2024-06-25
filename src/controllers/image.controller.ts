@@ -7,16 +7,20 @@ export class ImageController {
 
    public upload = async (req: Request, res: Response): Promise<Response> => {
       const files = req.files;
-      const memberId = 1;
+      const memberId = req.decoded?.userId;
+
+      if (!files) {
+         return res.status(StatusCodes.NOT_FOUND).json({
+            message: 'No image to upload was found',
+         });
+      } else if (!memberId) {
+         return res.status(StatusCodes.UNAUTHORIZED).json({
+            message: 'You are not allowed to do this action',
+         });
+      }
 
       try {
          const filesPath = await this.imageService.upload({ files, memberId });
-
-         if (!filesPath) {
-            return res.status(StatusCodes.NOT_FOUND).json({
-               message: 'No image to upload was found',
-            });
-         }
 
          return res.status(StatusCodes.OK).json(filesPath);
       } catch (err) {

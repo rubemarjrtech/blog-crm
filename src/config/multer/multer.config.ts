@@ -1,5 +1,6 @@
+import { Request } from 'express';
 import multer from 'multer';
-import { extname, resolve } from 'node:path';
+import path, { extname, resolve } from 'node:path';
 import { v4 } from 'uuid';
 
 export default {
@@ -9,12 +10,23 @@ export default {
          return cb(null, v4() + extname(file.originalname));
       },
    }),
-   fileFilter: (_, file, cb) => {
-      if (!file.mimetype.match(/png||jpeg||jpg||gif$i/)) {
-         cb(new Error('invalid image format!'));
-         return;
-      }
+   fileFilter: (
+      req: Request,
+      file: Request['file'],
+      cb: multer.FileFilterCallback,
+   ) => {
+      const filetypes = /jpeg|jpg|png/;
+      const extname = filetypes.test(
+         path.extname(file!.originalname).toLowerCase(),
+      );
+      const mimetype = filetypes.test(file!.mimetype);
 
-      cb(null, true);
+      if (mimetype && extname) {
+         return cb(null, true);
+      } else {
+         req.res!.status(422).json({
+            message: 'Error: Images only! (jpeg, jpg, png)',
+         });
+      }
    },
 };

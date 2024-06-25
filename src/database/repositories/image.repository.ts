@@ -32,8 +32,6 @@ export class ImageRepository {
             });
          }
 
-         console.log(filesPath);
-
          return filesPath;
       }
 
