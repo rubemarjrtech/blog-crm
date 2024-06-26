@@ -22,9 +22,15 @@ export class PostService {
       page: number,
       perPage: number,
       id?: number,
-   ): Promise<Post[]> {
+   ): Promise<Post[] | null> {
       if (id) {
-         await this.postRepository.loadAll(page, perPage, id);
+         const posts = await this.postRepository.loadAll(page, perPage, id);
+
+         if (!posts) {
+            return null;
+         }
+
+         return posts;
       }
 
       const posts = await this.postRepository.loadAll(page, perPage);

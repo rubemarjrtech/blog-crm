@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BodyRequest } from './types';
+import { BodyRequest, QueryRequest } from './types';
 import { PostService } from '../services/post.service';
-import { createPostDTO } from '../DTOs/post.dto';
+import { createPostDTO, loadAllPostsDTO } from '../DTOs/post.dto';
 
 export class PostController {
    constructor(private postService: PostService) {} // eslint-disable-line
@@ -40,27 +40,35 @@ export class PostController {
    };
 
    public loadAllPosts = async (
-      req: Request,
+      req: QueryRequest<loadAllPostsDTO>,
       res: Response,
    ): Promise<Response> => {
       try {
-         const page = parseInt(req.query.page as string) || 1;
+         const { ct, page } = req.query;
+
+         const pg = parseInt(page as string) || 1;
          const perPage = 12;
-         const ct = parseInt(req.query.ct as string);
-         const id = ct;
 
          // filter posts by member
          if (ct) {
+            const id = parseInt(ct);
+
             const singleMemberPosts = await this.postService.loadAll(
-               page,
+               pg,
                perPage,
                id,
             );
 
+            if (!singleMemberPosts) {
+               return res.status(StatusCodes.NOT_FOUND).json({
+                  message: 'No posts for that member were found',
+               });
+            }
+
             return res.status(StatusCodes.OK).json(singleMemberPosts);
          }
 
-         const posts = await this.postService.loadAll(page, perPage);
+         const posts = await this.postService.loadAll(pg, perPage);
 
          return res.status(StatusCodes.OK).json(posts);
       } catch (err) {

@@ -17,3 +17,20 @@ export const createPostSchema = {
 const createPostObject = z.object(createPostSchema);
 
 export type createPostDTO = z.infer<typeof createPostObject>;
+
+export const loadAllPostsSchema = {
+   ct: z
+      .string({
+         invalid_type_error: 'Invalid data',
+      })
+      .optional(),
+   page: z
+      .string({
+         invalid_type_error: 'Invalid data',
+      })
+      .optional(),
+};
+
+const loadAllPostsObject = z.object(loadAllPostsSchema);
+
+export type loadAllPostsDTO = z.infer<typeof loadAllPostsObject>;

@@ -29,7 +29,7 @@ export class PostRepository {
       page: number,
       perPage: number,
       id?: number,
-   ): Promise<Post[]> {
+   ): Promise<Post[] | null> {
       if (id) {
          const singleMemberPosts = await this.loadSingleMemberPosts(
             page,
@@ -54,18 +54,20 @@ export class PostRepository {
       page: number,
       perPage: number,
       id: number,
-   ): Promise<Post[]> {
-      const memberPosts = await this.postModel.find({
-         relations: ['member'],
-         where: {
-            member: { id },
-         },
-         order: {
-            createdAt: 'DESC',
-         },
-         skip: (page - 1) * perPage,
-         take: perPage,
-      });
+   ): Promise<Post[] | null> {
+      const postsWithIdExist = await this.postModel.findOneBy({ memberId: id });
+
+      if (!postsWithIdExist) {
+         return null;
+      }
+
+      const memberPosts = await this.postModel
+         .createQueryBuilder('posts')
+         .where('memberId = :id', { id })
+         .orderBy('createdAt', 'DESC')
+         .offset((page - 1) * perPage)
+         .limit(perPage)
+         .getMany();
 
       return memberPosts;
    }
