@@ -9,10 +9,16 @@ export function authMiddleware(
 ) {
    const headerVerification = req.headers.authorization;
 
-   const token = headerVerification?.split(' ')[1];
+   if (!headerVerification) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+         message: 'You are not allowed to do this action',
+      });
+   }
+
+   const token = headerVerification.split(' ')[1];
 
    try {
-      const validatedUser = AuthService.validateToken(token as string);
+      const validatedUser = AuthService.validateToken(token);
       req.decoded = validatedUser;
       next();
    } catch (err) {
