@@ -1,13 +1,8 @@
 import 'reflect-metadata';
-import express, { json } from 'express';
-import { router } from './routes';
 import { appDataSource } from './data-source';
+import app from './app';
 
-const app = express();
 const PORT = 4000;
-
-app.use(json());
-app.use('/api', router);
 
 appDataSource
    .initialize()
