@@ -17,4 +17,9 @@ export class Admin {
       nullable: false,
    })
    password: string;
+
+   @Column({
+      default: 'manager',
+   })
+   role: string;
 }

@@ -5,6 +5,7 @@ import { commentRoutes } from './comment.route';
 import { memberRoutes } from './member.route';
 import { imageRoutes } from './image.route';
 import { userRoutes } from './user.route';
+import { adminRoutes } from './admin.route';
 
 export const router = Router();
 
@@ -14,3 +15,4 @@ router.use('/comment', commentRoutes);
 router.use('/member', memberRoutes);
 router.use('/image', imageRoutes);
 router.use('/user', userRoutes);
+router.use('/admin', adminRoutes);
