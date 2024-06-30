@@ -7,7 +7,7 @@ export class ImageController {
 
    public upload = async (req: Request, res: Response): Promise<Response> => {
       const files = req.files;
-      const memberId = req.decoded?.userId;
+      const memberId = req.decodedUser?.userId;
 
       if (!files) {
          return res.status(StatusCodes.NOT_FOUND).json({

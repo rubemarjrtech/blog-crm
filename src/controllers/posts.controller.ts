@@ -13,7 +13,7 @@ export class PostController {
    ): Promise<void> => {
       try {
          const { title, body, thumbnail } = req.body;
-         const user = req.decoded;
+         const user = req.decodedUser;
 
          const createdPost = await this.postService.create({
             title,
@@ -133,6 +133,50 @@ export class PostController {
          console.log(err);
          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: 'Something went wrong',
+         });
+      }
+   };
+
+   public loadPostsForApproval = async (
+      req: Request,
+      res: Response,
+   ): Promise<void> => {
+      try {
+         const posts = await this.postService.loadPostsForApproval();
+
+         res.status(StatusCodes.OK).json(posts);
+      } catch (err) {
+         console.log(err);
+
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
+
+   public publishPost = async (
+      req: Request,
+      res: Response,
+   ): Promise<Response> => {
+      try {
+         const id = parseInt(req.params.id);
+
+         const status = await this.postService.publishPost(id);
+
+         if (!status) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+               message: 'Post not found',
+            });
+         }
+
+         return res.status(StatusCodes.OK).json({
+            message: 'Post published successfully',
+         });
+      } catch (err) {
+         console.log(err);
+
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            error: 'Something went wrong',
          });
       }
    };
