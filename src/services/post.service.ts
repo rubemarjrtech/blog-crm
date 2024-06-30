@@ -55,4 +55,16 @@ export class PostService {
 
       return mostRecent;
    }
+
+   public async loadPostsForApproval(): Promise<Post[]> {
+      const posts = await this.postRepository.loadPostsForApproval();
+
+      return posts;
+   }
+
+   public async publishPost(id: number): Promise<string | null> {
+      const status = await this.postRepository.publishPost(id);
+
+      return status;
+   }
 }

@@ -42,6 +42,7 @@ export class PostRepository {
 
       const posts = await this.postModel
          .createQueryBuilder('posts')
+         .where('status = :status', { status: 'published' })
          .orderBy('createdAt', 'DESC')
          .offset((page - 1) * perPage)
          .limit(perPage)
@@ -121,5 +122,31 @@ export class PostRepository {
          .getMany();
 
       return posts;
+   }
+
+   public async loadPostsForApproval(): Promise<Post[]> {
+      const posts = await this.postModel.find({
+         where: {
+            status: 'Waiting for approval',
+         },
+      });
+
+      return posts;
+   }
+
+   public async publishPost(id: number): Promise<string | null> {
+      const post = await this.postModel.findOneBy({ id });
+
+      if (!post) {
+         return null;
+      }
+
+      await this.postModel
+         .createQueryBuilder('post')
+         .update({ status: 'published' })
+         .where('id = :id', { id })
+         .execute();
+
+      return 'published';
    }
 }

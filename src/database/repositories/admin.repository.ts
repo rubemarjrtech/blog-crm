@@ -29,7 +29,7 @@ export class AdminRepository {
          role: admin.role,
       };
 
-      const adminToken = AuthService.generateToken(adminPayload);
+      const adminToken = AuthService.generateAdminToken(adminPayload);
 
       return adminToken;
    }

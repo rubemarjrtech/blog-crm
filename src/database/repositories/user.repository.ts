@@ -26,12 +26,12 @@ export class UserRepository {
          return null;
       }
 
-      const userPayload = {
+      const userPayload: Partial<User> = {
          userId: user.userId,
          username: user.username,
       };
 
-      const userToken = AuthService.generateToken(userPayload);
+      const userToken = AuthService.generateUserToken(userPayload);
 
       return userToken;
    }
