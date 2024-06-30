@@ -22,6 +22,7 @@ export class CommentRepository {
       const comments = await this.commentModel
          .createQueryBuilder('comments')
          .where('postId = :postId', { postId })
+         .orderBy('createdAt', 'ASC')
          .take(perPage)
          .skip((page - 1) * perPage)
          .getMany();
