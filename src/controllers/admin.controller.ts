@@ -1,17 +1,19 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AdminRepository } from '../database/repositories/admin.repository';
 import { AdminService } from '../services/admin.service';
 import { StatusCodes } from 'http-status-codes';
+import { BodyRequest } from './types';
+import { AdminLoginDTO } from '../DTOs/admin.dto';
 
 export class AdminController {
-   public async login(req: Request, res: Response) {
+   public async login(req: BodyRequest<AdminLoginDTO>, res: Response) {
       try {
          const { username, password } = req.body;
 
          const adminRepository = new AdminRepository();
          const adminService = new AdminService(adminRepository);
 
-         const adminToken = await adminService.login(username, password);
+         const adminToken = await adminService.login({ username, password });
 
          if (!adminToken) {
             return res.status(StatusCodes.BAD_REQUEST).json({
