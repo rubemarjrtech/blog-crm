@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BodyRequest, QueryRequest } from './types';
 import { PostService } from '../services/post.service';
 import { createPostDTO, loadAllPostsDTO } from '../DTOs/post.dto';
+import { BodyRequest, QueryRequest } from './types';
 
 export class PostController {
    constructor(private postService: PostService) {} // eslint-disable-line
@@ -170,7 +170,7 @@ export class PostController {
          }
 
          return res.status(StatusCodes.OK).json({
-            message: 'Post published successfully',
+            message: `The post was ${status} with success!`,
          });
       } catch (err) {
          console.log(err);

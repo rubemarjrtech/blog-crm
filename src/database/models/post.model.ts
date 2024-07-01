@@ -10,6 +10,11 @@ import {
 } from 'typeorm';
 import { Member } from './member.model';
 import { Comment } from './comment.model';
+
+export enum Status {
+   AWAITING = 'waiting for approval',
+   APPROVED = 'published',
+}
 @Entity()
 export class Post {
    @PrimaryGeneratedColumn()
@@ -39,7 +44,7 @@ export class Post {
    })
    createdAt: Date;
 
-   @Column({ default: 'Waiting for approval' })
+   @Column({ default: Status.AWAITING })
    status: string;
 
    @Column()

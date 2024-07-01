@@ -1,5 +1,5 @@
 import { appDataSource } from '../../data-source';
-import { Post } from '../models/post.model';
+import { Post, Status } from '../models/post.model';
 import { PostEntity } from '../../entities/post.entity';
 
 const getPostRepository = appDataSource.getRepository(Post);
@@ -42,7 +42,7 @@ export class PostRepository {
 
       const posts = await this.postModel
          .createQueryBuilder('posts')
-         .where('status = :status', { status: 'published' })
+         .where('status = :status', { status: Status.APPROVED })
          .orderBy('createdAt', 'DESC')
          .offset((page - 1) * perPage)
          .limit(perPage)
@@ -65,6 +65,7 @@ export class PostRepository {
       const memberPosts = await this.postModel
          .createQueryBuilder('posts')
          .where('memberId = :id', { id })
+         .andWhere({ status: Status.APPROVED })
          .orderBy('createdAt', 'DESC')
          .offset((page - 1) * perPage)
          .limit(perPage)
@@ -80,7 +81,7 @@ export class PostRepository {
          .where('post.id = :id', { id })
          .getOne();
 
-      if (!postDetails) {
+      if (!postDetails || postDetails.status === Status.AWAITING) {
          return null;
       }
 
@@ -98,6 +99,7 @@ export class PostRepository {
             'posts.thumbnail',
             'member.fullName',
          ])
+         .where({ status: Status.APPROVED })
          .orderBy('createdAt', 'DESC')
          .limit(10)
          .getMany();
@@ -117,6 +119,7 @@ export class PostRepository {
             'member.fullName',
          ])
          .where('memberId = :id', { id })
+         .andWhere({ status: Status.APPROVED })
          .orderBy('createdAt', 'DESC')
          .limit(10)
          .getMany();
@@ -127,7 +130,7 @@ export class PostRepository {
    public async loadPostsForApproval(): Promise<Post[]> {
       const posts = await this.postModel.find({
          where: {
-            status: 'Waiting for approval',
+            status: Status.AWAITING,
          },
       });
 
@@ -143,10 +146,10 @@ export class PostRepository {
 
       await this.postModel
          .createQueryBuilder('post')
-         .update({ status: 'published' })
+         .update({ status: Status.APPROVED })
          .where('id = :id', { id })
          .execute();
 
-      return 'published';
+      return Status.APPROVED;
    }
 }
