@@ -1,15 +1,20 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services/user.service';
+import { BodyRequest } from './types';
+import { UserLoginDTO } from '../DTOs/user.dto';
 
 export class UserController {
    constructor(private userService: UserService) {} // eslint-disable-line
 
-   public login = async (req: Request, res: Response): Promise<Response> => {
+   public login = async (
+      req: BodyRequest<UserLoginDTO>,
+      res: Response,
+   ): Promise<Response> => {
       try {
          const { username, password } = req.body;
 
-         const userToken = await this.userService.login(username, password);
+         const userToken = await this.userService.login({ username, password });
 
          if (!userToken) {
             return res.status(StatusCodes.BAD_REQUEST).json({
