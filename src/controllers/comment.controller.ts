@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { CommentService } from '../services/comment.service';
-import { BodyRequest } from './types';
 import { createCommentDTO } from '../DTOs/comment.dto';
+import { BodyRequest } from './types';
 
 export class CommentController {
    constructor(private commentService: CommentService) {} // eslint-disable-line

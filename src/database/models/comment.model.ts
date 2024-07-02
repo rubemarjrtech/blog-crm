@@ -7,7 +7,7 @@ import {
    Index,
    CreateDateColumn,
 } from 'typeorm';
-import { Post } from './post.model';
+import { Post, Status } from './post.model';
 
 @Entity()
 export class Comment {
@@ -43,6 +43,11 @@ export class Comment {
       default: () => 'CURRENT_TIMESTAMP(6)',
    })
    createdAt: Date;
+
+   @Column({
+      default: Status.AWAITING,
+   })
+   status: string;
 
    @Column()
    @Index()

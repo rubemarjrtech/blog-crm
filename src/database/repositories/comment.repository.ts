@@ -1,6 +1,7 @@
 import { appDataSource } from '../../data-source';
 import { CommentEntity } from '../../entities/comment.entity';
 import { Comment } from '../models/comment.model';
+import { Status } from '../models/post.model';
 
 const getCommentRepository = appDataSource.getRepository(Comment);
 
@@ -22,6 +23,7 @@ export class CommentRepository {
       const comments = await this.commentModel
          .createQueryBuilder('comments')
          .where('postId = :postId', { postId })
+         .andWhere({ status: Status.APPROVED })
          .orderBy('createdAt', 'ASC')
          .take(perPage)
          .skip((page - 1) * perPage)

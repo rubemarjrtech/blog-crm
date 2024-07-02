@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services/user.service';
-import { BodyRequest } from './types';
 import { UserLoginDTO } from '../DTOs/user.dto';
+import { BodyRequest } from './types';
 
 export class UserController {
    constructor(private userService: UserService) {} // eslint-disable-line

@@ -2,8 +2,8 @@ import { Response } from 'express';
 import { AdminRepository } from '../database/repositories/admin.repository';
 import { AdminService } from '../services/admin.service';
 import { StatusCodes } from 'http-status-codes';
-import { BodyRequest } from './types';
 import { AdminLoginDTO } from '../DTOs/admin.dto';
+import { BodyRequest } from './types';
 
 export class AdminController {
    public async login(req: BodyRequest<AdminLoginDTO>, res: Response) {

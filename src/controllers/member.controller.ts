@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { MemberService } from '../services/member.service';
-import { QueryRequest } from './types';
 import { loadAllMembersDTO } from '../DTOs/member.dto';
+import { QueryRequest } from './types';
 
 export class MemberController {
    constructor(private memberService: MemberService) {} // eslint-disable-line
