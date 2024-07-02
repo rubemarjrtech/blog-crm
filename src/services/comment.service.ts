@@ -37,6 +37,18 @@ export class CommentService {
       return comments;
    }
 
+   public async loadCommentsForApproval(): Promise<Comment[]> {
+      const comments = await this.commentRepository.loadCommentsForApproval();
+
+      return comments;
+   }
+
+   public async updateCommentStatus(id: string): Promise<string | null> {
+      const status = await this.commentRepository.updateCommentStatus(id);
+
+      return status;
+   }
+
    public async deleteComment(id: string): Promise<string | null> {
       const deletedComment = await this.commentRepository.deleteComment(id);
 

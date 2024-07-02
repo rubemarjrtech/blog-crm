@@ -32,6 +32,40 @@ export class CommentRepository {
       return comments;
    }
 
+   public async loadCommentsForApproval(): Promise<Comment[]> {
+      const comments = await this.commentModel.find({
+         where: {
+            status: Status.AWAITING,
+         },
+         order: {
+            createdAt: 'ASC',
+         },
+         take: 20,
+      });
+
+      return comments;
+   }
+
+   public async updateCommentStatus(id: string): Promise<string | null> {
+      const comment = await this.commentModel
+         .createQueryBuilder('comment')
+         .where('id = :id', { id })
+         .andWhere({ status: Status.AWAITING })
+         .getOne();
+
+      if (!comment) {
+         return null;
+      }
+
+      await this.commentModel
+         .createQueryBuilder('comment')
+         .update({ status: Status.APPROVED })
+         .where('id = :id', { id })
+         .execute();
+
+      return Status.APPROVED;
+   }
+
    public async deleteComment(id: string): Promise<string | null> {
       const comment = await this.commentModel.findOne({
          where: { id },

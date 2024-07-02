@@ -7,7 +7,7 @@ import {
    Index,
    CreateDateColumn,
 } from 'typeorm';
-import { Post, Status } from './post.model';
+import { Post } from './post.model';
 
 @Entity()
 export class Comment {
@@ -45,7 +45,7 @@ export class Comment {
    createdAt: Date;
 
    @Column({
-      default: Status.AWAITING,
+      default: 'waiting for approval',
    })
    status: string;
 

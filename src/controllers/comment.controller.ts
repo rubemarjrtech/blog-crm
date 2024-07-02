@@ -58,6 +58,47 @@ export class CommentController {
       }
    };
 
+   public loadCommentsForApproval = async (
+      _: Request,
+      res: Response,
+   ): Promise<void> => {
+      try {
+         const comments = await this.commentService.loadCommentsForApproval();
+
+         res.status(StatusCodes.OK).json(comments);
+      } catch (err) {
+         console.log(err);
+
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
+
+   public updateCommentStatus = async (req: Request, res: Response) => {
+      try {
+         const id = req.params.id;
+
+         const status = await this.commentService.updateCommentStatus(id);
+
+         if (!status) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+               message: 'Comment not found or has already been approved',
+            });
+         }
+
+         return res.status(StatusCodes.OK).json({
+            message: `The comment was ${status} with success!`,
+         });
+      } catch (err) {
+         console.log(err);
+
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
+
    public deleteComment = async (
       req: Request,
       res: Response,
