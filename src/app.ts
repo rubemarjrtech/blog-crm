@@ -3,7 +3,7 @@ import { router } from './routes';
 import { resolve } from 'path';
 
 class App {
-   app: Application;
+   public app: Application;
 
    constructor() {
       this.app = express();
@@ -11,7 +11,7 @@ class App {
       this.router();
    }
 
-   middlewares(): void {
+   private middlewares(): void {
       this.app.use(json());
       this.app.use(
          '/uploads',
@@ -19,7 +19,7 @@ class App {
       );
    }
 
-   router(): void {
+   private router(): void {
       this.app.use('/api', router);
    }
 }
