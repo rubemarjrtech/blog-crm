@@ -1,7 +1,7 @@
 {
    "name": "blog",
    "version": "1.0.0",
-   "description": "Blog project for writing, recording and sharing whatever you want to talk about.",
+   "description": "Blog project for managing blog posts and comments",
    "scripts": {
       "dev": "ts-node-dev --transpile-only ./src/server.ts",
       "lint": "eslint ./ --fix",
