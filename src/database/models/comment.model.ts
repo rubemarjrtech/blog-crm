@@ -53,7 +53,7 @@ export class Comment {
    @Index()
    postId!: number;
 
-   @ManyToOne(() => Post, (post) => post.comments)
+   @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
    @JoinColumn({ name: 'postId', referencedColumnName: 'id' })
    post!: Post;
 }

@@ -23,7 +23,7 @@ export class Image {
    @Index()
    memberId!: number;
 
-   @ManyToOne(() => Member, (member) => member.images)
+   @ManyToOne(() => Member, (member) => member.images, { onDelete: 'CASCADE' })
    @JoinColumn({ name: 'memberId', referencedColumnName: 'id' })
    member!: Member;
 }
