@@ -67,4 +67,10 @@ export class PostService {
 
       return status;
    }
+
+   public async deletePost(id: number): Promise<boolean | null> {
+      const post = await this.postRepository.deletePost(id);
+
+      return post;
+   }
 }

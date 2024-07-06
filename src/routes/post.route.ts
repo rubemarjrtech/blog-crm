@@ -29,6 +29,11 @@ postRoutes.get(
    postController.loadPostsForApproval,
 );
 postRoutes.get('/recent', postController.loadMostRecentAll);
-postRoutes.put('/pending/:id', adminAuthMiddleware, postController.publishPost);
 postRoutes.get('/:id', postController.loadPostDetails);
 postRoutes.get('/recent/:id', postController.loadMostRecentSingle);
+postRoutes.put('/approve/:id', adminAuthMiddleware, postController.publishPost);
+postRoutes.delete(
+   '/delete/:id',
+   adminAuthMiddleware,
+   postController.deletePost,
+);

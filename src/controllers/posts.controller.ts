@@ -180,4 +180,31 @@ export class PostController {
          });
       }
    };
+
+   public deletePost = async (
+      req: Request,
+      res: Response,
+   ): Promise<Response> => {
+      try {
+         const id = parseInt(req.params.id);
+
+         const post = await this.postService.deletePost(id);
+
+         if (!post) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+               message: 'Post not found',
+            });
+         }
+
+         return res.status(StatusCodes.OK).json({
+            message: 'Post deleted with success',
+         });
+      } catch (err) {
+         console.log(err);
+
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong',
+         });
+      }
+   };
 }

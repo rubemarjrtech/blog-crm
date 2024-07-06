@@ -51,7 +51,7 @@ export class Post {
    @Index()
    memberId!: number;
 
-   @ManyToOne(() => Member, (member) => member.posts)
+   @ManyToOne(() => Member, (member) => member.posts, { onDelete: 'CASCADE' })
    @JoinColumn({ name: 'memberId', referencedColumnName: 'id' })
    member!: Member;
 

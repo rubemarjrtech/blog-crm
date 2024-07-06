@@ -152,4 +152,16 @@ export class PostRepository {
 
       return Status.APPROVED;
    }
+
+   public async deletePost(id: number): Promise<boolean | null> {
+      const post = await this.postModel.findOneBy({ id });
+
+      if (!post) {
+         return null;
+      }
+
+      await this.postModel.delete({ id });
+
+      return true;
+   }
 }
