@@ -1,11 +1,13 @@
-FROM node:20-alpine
+FROM node:alpine
 
-WORKDIR /home/app
+WORKDIR /blog-api
 
-COPY . ./
+COPY ./package.json .
 
-RUN npm i
+RUN npm install
 
-EXPOSE 3000
+COPY . .
+
+EXPOSE 4000
 
 CMD ["npm", "run", "dev"]

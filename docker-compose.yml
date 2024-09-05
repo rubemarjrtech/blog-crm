@@ -1,18 +1,18 @@
-version: '3'
+version: '3.5'
 
 networks:
    local:
 
 services:
    mysql:
-      container_name: mysqldb
+      container_name: mysqlblogdb
       image: mysql:8
       command: --default-authentication-plugin=mysql_native_password
       environment:
-         MYSQL_DATABASE: blogdb
-         MYSQL_USER: blog
-         MYSQL_PASSWORD: blog
-         MYSQL_ROOT_PASSWORD: root
+         MYSQL_DATABASE: ${MYSQL_DATABASE}
+         MYSQL_USER: ${MYSQL_USER}
+         MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+         MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       networks:
          - local
       ports:
@@ -22,16 +22,15 @@ services:
       depends_on:
          - mysql
       container_name: blog-api
-      build:
-         context: .
-         dockerfile: Dockerfile
+      build: .
       environment:
-         DB_HOST: mysql
-         DB_USERNAME: blog
-         DB_PASSWORD: blog
-         DB_DATABASE: blogdb
+         DB_HOST: ${DB_HOST}
+         DB_USERNAME: ${DB_USERNAME}
+         DB_PASSWORD: ${DB_PASSWORD}
+         DB_DATABASE: ${DB_DATABASE}
       volumes:
-         - ./:/home/app
+         - ./:/blog-api
+         - /blog-api/node_modules
       ports:
          - '4000:4000'
       networks:
