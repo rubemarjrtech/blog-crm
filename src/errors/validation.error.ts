@@ -1,9 +1,8 @@
-export class AppError {
-   message: string | string[];
+export class AppError extends Error {
    code: number;
 
-   constructor(message: string | string[], code: number) {
-      this.message = message;
+   constructor(message: string, code: number) {
+      super(message);
       this.code = code;
    }
 }

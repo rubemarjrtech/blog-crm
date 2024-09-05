@@ -18,9 +18,11 @@ export function validator(params: ValidationTypes) {
       const result = z.object(params.schema).safeParse(req[params.type]);
 
       if (!result.success) {
-         const formattedErrorMessage = result.error.issues.map((error) => {
-            return `Error on field ${error.path}: ${error.message}`;
-         });
+         const formattedErrorMessage = result.error.issues
+            .map((error) => {
+               return `Error on field ${error.path}: ${error.message}`;
+            })
+            .join('. ');
 
          const appError = new AppError(
             formattedErrorMessage,
