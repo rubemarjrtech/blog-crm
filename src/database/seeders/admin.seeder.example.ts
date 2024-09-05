@@ -7,19 +7,19 @@ export class AdminSeeder implements Seeder {
    async run(dataSource: DataSource): Promise<void> {
       const adminRepository = dataSource.getRepository(Admin);
 
-      const userData = {
+      const adminData = {
          username: '',
          password: await bcrypt.hash('', 10),
       };
 
       const alreadyExists = await adminRepository.findOne({
          where: {
-            username: userData.username,
+            username: adminData.username,
          },
       });
 
       if (!alreadyExists) {
-         const newAdmin = adminRepository.create(userData);
+         const newAdmin = adminRepository.create(adminData);
 
          await adminRepository.save(newAdmin);
       }

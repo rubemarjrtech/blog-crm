@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
-import { Comment } from '../../database/models/comment.model';
-import { Post } from '../../database/models/post.model';
+import { Comment } from '../models/comment.model';
+import { Post } from '../models/post.model';
 import { faker } from '@faker-js/faker';
 
 export class CommentSeeder implements Seeder {
