@@ -38,8 +38,11 @@ export class PostService {
       return posts;
    }
 
-   public async loadPostDetails(id: number): Promise<Post | null> {
-      const postDetails = await this.postRepository.loadPostDetails(id);
+   public async loadPostDetails(
+      id: number,
+      page: number,
+   ): Promise<Post | null> {
+      const postDetails = await this.postRepository.loadPostDetails(id, page);
 
       return postDetails;
    }

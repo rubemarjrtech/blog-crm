@@ -74,11 +74,18 @@ export class PostRepository {
       return memberPosts;
    }
 
-   public async loadPostDetails(id: number): Promise<Post | null> {
+   public async loadPostDetails(
+      id: number,
+      page: number,
+   ): Promise<Post | null> {
       const postDetails = await this.postModel
          .createQueryBuilder('post')
          .leftJoinAndSelect('post.member', 'member')
+         .leftJoinAndSelect('post.comments', 'comments')
          .where('post.id = :id', { id })
+         .andWhere('comments.status = :status', { status: Status.APPROVED })
+         .limit(30)
+         .skip((page - 1) * 30)
          .getOne();
 
       if (!postDetails || postDetails.status === Status.AWAITING) {

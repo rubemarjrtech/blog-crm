@@ -84,9 +84,10 @@ export class PostController {
       res: Response,
    ): Promise<Response> => {
       try {
+         const page = parseInt(req.query.page as string) || 1;
          const id = parseInt(req.params.id);
 
-         const postDetails = await this.postService.loadPostDetails(id);
+         const postDetails = await this.postService.loadPostDetails(id, page);
 
          if (!postDetails) {
             return res.status(StatusCodes.NOT_FOUND).json({
