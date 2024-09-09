@@ -1,6 +1,7 @@
 import express, { Application, json } from 'express';
 import { router } from './routes';
 import { resolve } from 'path';
+import cors from 'cors';
 
 class App {
    public app: Application;
@@ -16,6 +17,12 @@ class App {
       this.app.use(
          '/uploads',
          express.static(resolve(__dirname, '..', 'uploads')),
+      );
+      this.app.use(
+         cors({
+            origin: process.env.ORIGIN,
+            credentials: true,
+         }),
       );
    }
 
