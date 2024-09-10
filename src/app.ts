@@ -2,6 +2,7 @@ import express, { Application, json } from 'express';
 import { router } from './routes';
 import { resolve } from 'path';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 class App {
    public app: Application;
@@ -24,6 +25,7 @@ class App {
             credentials: true,
          }),
       );
+      this.app.use(cookieParser());
    }
 
    private router(): void {
