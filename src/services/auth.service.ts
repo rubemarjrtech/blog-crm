@@ -1,10 +1,19 @@
-import { User } from '../database/models/user.model';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { Admin } from '../database/models/admin.model';
+import 'dotenv/config';
 
-export interface DecodedUser
-   extends Omit<User, 'member' | 'newid' | 'password'> {}
+export interface UserPayload {
+   userId: number;
+   username: string;
+   sessionId: string;
+}
+
+export interface UserSessionPayload {
+   sessionId: string;
+   username: string;
+   userId: number;
+}
 
 export interface DecodedAdmin extends Omit<Admin, 'password'> {}
 export default class AuthService {
@@ -22,16 +31,34 @@ export default class AuthService {
       return await bcrypt.compare(password, hashedPassword);
    }
 
-   public static generateUserToken(payload: object): string {
-      return jwt.sign(payload, 'mysecret', { expiresIn: '5D' });
+   public static generateUserAccessToken(payload: UserPayload): string {
+      return jwt.sign(payload, process.env.SECRET_ACCESS_USER as string, {
+         expiresIn: '10s',
+      });
+   }
+
+   public static generateUserRefreshToken(payload: UserSessionPayload): string {
+      return jwt.sign(payload, process.env.SECRET_REFRESH_USER as string, {
+         expiresIn: '1D',
+      });
    }
 
    public static generateAdminToken(payload: object): string {
       return jwt.sign(payload, 'secret', { expiresIn: '5D' });
    }
 
-   public static validateUserToken(token: string): DecodedUser {
-      return jwt.verify(token, 'mysecret') as DecodedUser;
+   public static validateUserAccessToken(token: string): UserPayload {
+      return jwt.verify(
+         token,
+         process.env.SECRET_ACCESS_USER as string,
+      ) as UserPayload;
+   }
+
+   public static validateUserRefreshToken(token: string): UserPayload {
+      return jwt.verify(
+         token,
+         process.env.SECRET_REFRESH_USER as string,
+      ) as UserPayload;
    }
 
    public static validateAdminToken(token: string): DecodedAdmin {

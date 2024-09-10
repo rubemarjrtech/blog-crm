@@ -1,17 +1,22 @@
 import { UserLoginDTO } from '../../DTOs/user.dto';
 import { appDataSource } from '../../data-source';
 import AuthService from '../../services/auth.service';
+import { Session } from '../models/session.model';
 import { User } from '../models/user.model';
 
-const userRepository = appDataSource.getRepository(User);
+export type TokensAndSession = [
+   accessToken: string,
+   refreshToken: string,
+   session: Session,
+];
 
 export class UserRepository {
-   constructor(private userModel = userRepository) {} // eslint-disable-line
+   constructor(private userModel = appDataSource.getRepository(User)) {} // eslint-disable-line
 
    public async login({
       username,
       password,
-   }: UserLoginDTO): Promise<string | null> {
+   }: UserLoginDTO): Promise<User | null> {
       const user = await this.userModel.findOneBy({ username });
 
       if (!user) {
@@ -27,13 +32,6 @@ export class UserRepository {
          return null;
       }
 
-      const userPayload: Partial<User> = {
-         userId: user.userId,
-         username: user.username,
-      };
-
-      const userToken = AuthService.generateUserToken(userPayload);
-
-      return userToken;
+      return user;
    }
 }
