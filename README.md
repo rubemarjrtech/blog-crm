@@ -1,6 +1,7 @@
 # Blog CRM (Customer Relationship Management) API for managing user posts and visitors comments.
 
 #### About this project
+Project builts with the following technologies: Nodejs, MySQL, TypeORM and Docker.
 The idea of this project is to have control and manage posts and comments for an artist, so we have an admin who could be the artists' staff. They will be the ones approving posts made by the artists themselves
 as well as approving or rejecting comments made in the posts made by the artists.
 This way, the staff and management have full control over what is posted so they can avoid unwanted content in their blogs.
