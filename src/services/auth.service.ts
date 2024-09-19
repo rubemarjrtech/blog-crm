@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { Admin } from '../database/models/admin.model';
 import 'dotenv/config';
 
 export interface UserPayload {
@@ -8,14 +7,12 @@ export interface UserPayload {
    username: string;
    sessionId: string;
 }
-
-export interface UserSessionPayload {
-   sessionId: string;
+export interface AdminPayload {
+   adminId: number;
    username: string;
-   userId: number;
+   sessionId: string;
 }
 
-export interface DecodedAdmin extends Omit<Admin, 'password'> {}
 export default class AuthService {
    public static async hashPassword(
       password: string,
@@ -37,14 +34,22 @@ export default class AuthService {
       });
    }
 
-   public static generateUserRefreshToken(payload: UserSessionPayload): string {
+   public static generateUserRefreshToken(payload: UserPayload): string {
       return jwt.sign(payload, process.env.SECRET_REFRESH_USER as string, {
          expiresIn: '1D',
       });
    }
 
-   public static generateAdminToken(payload: object): string {
-      return jwt.sign(payload, 'secret', { expiresIn: '5D' });
+   public static generateAdminAccessToken(payload: AdminPayload): string {
+      return jwt.sign(payload, process.env.SECRET_ACCESS_ADMIN as string, {
+         expiresIn: '15s',
+      });
+   }
+
+   public static generateAdminRefreshToken(payload: AdminPayload): string {
+      return jwt.sign(payload, process.env.SECRET_REFRESH_ADMIN as string, {
+         expiresIn: '1D',
+      });
    }
 
    public static validateUserAccessToken(token: string): UserPayload {
@@ -61,7 +66,17 @@ export default class AuthService {
       ) as UserPayload;
    }
 
-   public static validateAdminToken(token: string): DecodedAdmin {
-      return jwt.verify(token, 'secret') as DecodedAdmin;
+   public static validateAdminAccessToken(token: string): AdminPayload {
+      return jwt.verify(
+         token,
+         process.env.SECRET_ACCESS_ADMIN as string,
+      ) as AdminPayload;
+   }
+
+   public static validateAdminRefreshToken(token: string): AdminPayload {
+      return jwt.verify(
+         token,
+         process.env.SECRET_REFRESH_ADMIN as string,
+      ) as AdminPayload;
    }
 }

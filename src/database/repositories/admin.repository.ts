@@ -11,7 +11,7 @@ export class AdminRepository {
    public async login({
       username,
       password,
-   }: AdminLoginDTO): Promise<string | null> {
+   }: AdminLoginDTO): Promise<Admin | null> {
       const admin = await this.adminModel.findOneBy({ username });
 
       if (!admin) {
@@ -24,14 +24,6 @@ export class AdminRepository {
          return null;
       }
 
-      const adminPayload: Partial<Admin> = {
-         id: admin.id,
-         username: admin.username,
-         role: admin.role,
-      };
-
-      const adminToken = AuthService.generateAdminToken(adminPayload);
-
-      return adminToken;
+      return admin;
    }
 }

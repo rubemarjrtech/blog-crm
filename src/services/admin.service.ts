@@ -1,4 +1,5 @@
 import { AdminLoginDTO } from '../DTOs/admin.dto';
+import { Admin } from '../database/models/admin.model';
 import { AdminRepository } from '../database/repositories/admin.repository';
 
 export class AdminService {
@@ -7,12 +8,12 @@ export class AdminService {
    public async login({
       username,
       password,
-   }: AdminLoginDTO): Promise<string | null> {
-      const adminToken = await this.adminRepository.login({
+   }: AdminLoginDTO): Promise<Admin | null> {
+      const admin = await this.adminRepository.login({
          username,
          password,
       });
 
-      return adminToken;
+      return admin;
    }
 }
