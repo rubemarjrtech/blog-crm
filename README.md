@@ -1,7 +1,12 @@
 # Blog CRM (Customer Relationship Management) API for managing user posts and visitors comments.
 
 #### About this project
-Project built with the following technologies: Nodejs, Express.js, MySQL, TypeORM and Docker.
+Project developed with the following technologies:
+* Nodejs
+* Express.js
+* MySQL
+* TypeORM
+* Docker.
 
 The idea of this project is to have control and manage posts and comments for an artist, so we have an admin who could be the artists' staff. They will be the ones approving posts made by the artists themselves
 as well as approving or rejecting comments made in the posts made by the artists.
@@ -9,7 +14,7 @@ This way, the staff and management have full control over what is posted so they
 
 
 #### Getting started
-First, the application should be running successfully.
+First, the application should be running successfully after running the commands docker-compose build and after its finished, docker-compose up.
 
 Now we need to seed the database with an admin, member, posts and comments:
 - Go to admin.seeder.example and edit the adminData object and save the file
@@ -46,10 +51,19 @@ Now we have an admin, member, posts and comments to control and manage!
 Ps: You can test it in the API platform of your preference
 
 To have comments, we need a blog post, which in turn requires a member to post a blog. We have seeded the database with some posts, so dont worry about it, but you could test it.
-Send a post request with the credentials in the body to the login route http://<your-host-goes-here>/api/user/login
-You should receive a token as the response. Use this token to send a post request to the create post route http://<your-host-goes-here>/api/post/create.
+Send a post request with the credentials in the body to the login route http://localhost:4000/api/user/login
+
+![Login](https://i.ibb.co/jhPSj6G/Captura-de-tela-2024-09-20-093423.png)
+
+You should receive a session and status 200 as the response.
+Nest, send a post request to the create post route http://localhost:4000/api/post/create.
+
+![Create-Post](https://i.ibb.co/5x4rQFB/Captura-de-tela-2024-09-20-094002.png)
 
 Now we have posts to manage!
+
+#### Reminder:
+you dont have to pass in tokens in the request headers, when you login, the access and refresh tokens are set as cookies and when sending requests to protected routes, they are gonna be retrieved automatically.
 
 ## Managing posts
 Login as admin sending the credentials to the admin login route http://<your-host-goes-here>/api/admin/login. You should receive a token in the response.
