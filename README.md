@@ -60,18 +60,27 @@ Nest, send a post request to the create post route http://localhost:4000/api/pos
 
 ![Create-Post](https://i.ibb.co/5x4rQFB/Captura-de-tela-2024-09-20-094002.png)
 
+You should receive the post in the response body and a status 200.
+
 Now we have posts to manage!
 
 #### Reminder:
 you dont have to pass in tokens in the request headers, when you login, the access and refresh tokens are set as cookies and when sending requests to protected routes, they are gonna be retrieved automatically.
 
 ## Managing posts
-Login as admin sending the credentials to the admin login route http://<your-host-goes-here>/api/admin/login. You should receive a token in the response.
-Now with the token, send a get request to the route http://<your-host-goes-here>/api/post/pending. You should receive a list of posts waiting for approval.
+Login as admin sending the credentials to the admin login route http://localhost:4000/api/admin/login.
+
+![AdminLogin](https://i.ibb.co/35KJXKW/Captura-de-tela-2024-09-20-094833.png)
+
+Now, you may send a get request to the route http://localhost:4000/api/post/pending. You should receive a list of posts waiting for approval.
+
+![PostsForApproval](https://i.ibb.co/vYtCF16/Captura-de-tela-2024-09-20-095217.png)
 
 ## Publishing posts
 You must be logged in as admin for this step.
-All you gotta do is send a put request to the route http://<your-host-goes-here>/api/post/approve/<post-id-goes-here>. It's done! Now people on the internet can view the post and comment on it.
+All you gotta do is send a put request to the route http://localhost:4000/api/post/approve/*postid*. Reminder! Post must exist in the database! It's done! Now people on the internet can view the post and comment on it.
+
+Let's test it by retrieving the posts as if we were a normal user browing on the website.
 
 ## Receiving and approving comments
 Of crouse, we need to be logged in as admin for this step.
