@@ -80,7 +80,11 @@ Now, you may send a get request to the route http://localhost:4000/api/post/pend
 You must be logged in as admin for this step.
 All you gotta do is send a put request to the route http://localhost:4000/api/post/approve/*postid*. Reminder! Post must exist in the database! It's done! Now people on the internet can view the post and comment on it.
 
+![PublishPost](https://i.ibb.co/GM3VyNF/Captura-de-tela-2024-09-20-100743.png)
+
 Let's test it by retrieving the posts as if we were a normal user browing on the website.
+
+![RetrieveApprovedPosts](https://i.ibb.co/Smtn2JK/Captura-de-tela-2024-09-20-101049.png)
 
 ## Receiving and approving comments
 Of crouse, we need to be logged in as admin for this step.
