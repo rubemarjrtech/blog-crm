@@ -13,7 +13,7 @@ as well as approving or rejecting comments made in the posts made by the artists
 This way, the staff and management have full control over what is posted so they can avoid unwanted content in their blogs.
 
 
-#### Getting started
+### Getting started
 First, the application should be running successfully after running the commands docker-compose build and after its finished, docker-compose up.
 
 ![AppStarted](https://i.ibb.co/ZMsDjJq/Captura-de-tela-2024-09-20-105439.png)
@@ -109,3 +109,10 @@ Only approved posts will show when we load details of a blog post. Now when we r
 
 ## Listing members
 You may also get information about all the artists in the route ```http://localhost:4000/api/member``` or full information for a single artist at ```http://localhost:4000/api/member/member-id-goes-here```
+
+## Versioning
+1.0.0.0
+
+## Author
+Rubemar Rocha de Souza Junior (https://github.com/rubemarjrtech)
+In case of sensitive bugs like security vulnerabilities, please contact rubemarrocha22@gmail.com directly instead of using issue tracker.
