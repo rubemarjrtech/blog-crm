@@ -16,6 +16,8 @@ This way, the staff and management have full control over what is posted so they
 #### Getting started
 First, the application should be running successfully after running the commands docker-compose build and after its finished, docker-compose up.
 
+![AppStarted](https://i.ibb.co/ZMsDjJq/Captura-de-tela-2024-09-20-105439.png)
+
 Now we need to seed the database with an admin, member, posts and comments:
 - Go to admin.seeder.example and edit the adminData object and save the file
 ```
@@ -87,9 +89,20 @@ Let's test it by retrieving the posts as if we were a normal user browing on the
 ![RetrieveApprovedPosts](https://i.ibb.co/Smtn2JK/Captura-de-tela-2024-09-20-101049.png)
 
 ## Receiving and approving comments
-Of crouse, we need to be logged in as admin for this step.
-Send a get request to the route http://<your-host-goes-here>/api/comment/pending. You should receive a list of comments waiting for approval.
-You like it? Approve it with a put request to the route http://<your-host-goes-here>/api/comment/aprove/<comment-id-goes-here>.
+First send a post request to http://localhost:4000/api/comment/create/postid with a comment like the following:
+
+![create-comment](https://i.ibb.co/cCY8GD3/Captura-de-tela-2024-09-20-105909.png)
+
+Now we need to be logged in as admin for this step.
+
+Send a get request to the route http://localhost:4000/api/comment/pending. You should receive a list of comments waiting for approval.
+
+![comments-for-approval](https://i.ibb.co/KV18rWY/Captura-de-tela-2024-09-20-110254.png)
+
+You like it? Approve it with a put request to the route http://localhost:4000/api/comment/aprove/comment-id-goes-here.
+
+
+
 Only approved posts will show when we load details of a blog post.
 
 ## Listing members
