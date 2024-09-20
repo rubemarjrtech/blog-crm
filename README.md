@@ -53,12 +53,12 @@ Now we have an admin, member, posts and comments to control and manage!
 Ps: You can test it in the API platform of your preference
 
 To have comments, we need a blog post, which in turn requires a member to post a blog. We have seeded the database with some posts, so dont worry about it, but you could test it.
-Send a post request with the credentials in the body to the login route http://localhost:4000/api/user/login
+Send a post request with the credentials in the body to the login route ```http://localhost:4000/api/user/login```
 
 ![Login](https://i.ibb.co/jhPSj6G/Captura-de-tela-2024-09-20-093423.png)
 
 You should receive a session and status 200 as the response.
-Nest, send a post request to the create post route http://localhost:4000/api/post/create.
+Nest, send a post request to the create post route ```http://localhost:4000/api/post/create```
 
 ![Create-Post](https://i.ibb.co/5x4rQFB/Captura-de-tela-2024-09-20-094002.png)
 
@@ -70,17 +70,17 @@ Now we have posts to manage!
 you dont have to pass in tokens in the request headers, when you login, the access and refresh tokens are set as cookies and when sending requests to protected routes, they are gonna be retrieved automatically.
 
 ## Managing posts
-Login as admin sending the credentials to the admin login route http://localhost:4000/api/admin/login.
+Login as admin sending the credentials to the admin login route ```http://localhost:4000/api/admin/login```
 
 ![AdminLogin](https://i.ibb.co/35KJXKW/Captura-de-tela-2024-09-20-094833.png)
 
-Now, you may send a get request to the route http://localhost:4000/api/post/pending. You should receive a list of posts waiting for approval.
+Now, you may send a get request to the route ```http://localhost:4000/api/post/pending``` You should receive a list of posts waiting for approval.
 
 ![PostsForApproval](https://i.ibb.co/vYtCF16/Captura-de-tela-2024-09-20-095217.png)
 
 ## Publishing posts
 You must be logged in as admin for this step.
-All you gotta do is send a put request to the route http://localhost:4000/api/post/approve/*postid*. Reminder! Post must exist in the database! It's done! Now people on the internet can view the post and comment on it.
+All you gotta do is send a put request to the route ```http://localhost:4000/api/post/approve/postid```. Reminder! Post must exist in the database! It's done! Now people on the internet can view the post and comment on it.
 
 ![PublishPost](https://i.ibb.co/GM3VyNF/Captura-de-tela-2024-09-20-100743.png)
 
@@ -89,27 +89,23 @@ Let's test it by retrieving the posts as if we were a normal user browing on the
 ![RetrieveApprovedPosts](https://i.ibb.co/Smtn2JK/Captura-de-tela-2024-09-20-101049.png)
 
 ## Receiving and approving comments
-First send a post request to http://localhost:4000/api/comment/create/postid with a comment like the following:
+First send a post request to ```http://localhost:4000/api/comment/create/postid``` with a comment like the following:
 
 ![create-comment](https://i.ibb.co/cCY8GD3/Captura-de-tela-2024-09-20-105909.png)
 
 Now we need to be logged in as admin for this step.
 
-Send a get request to the route http://localhost:4000/api/comment/pending. You should receive a list of comments waiting for approval.
+Send a get request to the route ```http://localhost:4000/api/comment/pending```. You should receive a list of comments waiting for approval.
 
 ![comments-for-approval](https://i.ibb.co/KV18rWY/Captura-de-tela-2024-09-20-110254.png)
 
-You like it? Approve it with a put request to the route http://localhost:4000/api/comment/aprove/comment-id-goes-here.
+You like it? Approve it with a put request to the route ```http://localhost:4000/api/comment/aprove/comment-id-goes-here```.
 
 
 
-Only approved posts will show when we load details of a blog post.
+Only approved posts will show when we load details of a blog post. Now when we retrieve a specific blog post for example of id 2:
+
+![blog-post-2](https://i.ibb.co/BKczcL6/Captura-de-tela-2024-09-20-133126.png)
 
 ## Listing members
-You may also get information about all the artists in the route http://<your-host-goes-here>/api/member or full information for a single artist at http://<your-host-goes-here>/api/member/heregoesid
-
-
-
-## Final notes:
-
-That's it. Now we manage the blog and comments of an artist.
+You may also get information about all the artists in the route ```http://localhost:4000/api/member``` or full information for a single artist at ```http://localhost:4000/api/member/member-id-goes-here```
