@@ -13,11 +13,11 @@ export async function userAuthMiddleware(
    res: Response,
    next: NextFunction,
 ): Promise<void> {
-   const { accessToken, refreshToken } = req.cookies;
+   const { userAccessToken, userRefreshToken } = req.cookies;
 
    try {
       const validatedUser = AuthService.validateUserAccessToken(
-         accessToken as string,
+         userAccessToken as string,
       );
       req.decodedUser = validatedUser;
       next();
@@ -25,7 +25,7 @@ export async function userAuthMiddleware(
       if (err instanceof TokenExpiredError) {
          try {
             const validatedUser = AuthService.validateUserRefreshToken(
-               refreshToken as string,
+               userRefreshToken as string,
             );
             const session = await sessionService.findOne(
                validatedUser.sessionId,
@@ -40,10 +40,11 @@ export async function userAuthMiddleware(
 
             const newAccessToken = AuthService.generateUserAccessToken({
                ...session,
+               userId: session.sessionOwnerId,
                sessionId: session.id,
             });
 
-            res.cookie('accessToken', newAccessToken, {
+            res.cookie('userAccessToken', newAccessToken, {
                httpOnly: true,
                maxAge: 300000,
             });
@@ -64,22 +65,59 @@ export async function userAuthMiddleware(
    }
 }
 
-export function adminAuthMiddleware(
+export async function adminAuthMiddleware(
    req: Request,
    res: Response,
    next: NextFunction,
-): void {
-   const headerVerification = req.headers.authorization;
-
-   const token = headerVerification?.split(' ')[1];
+): Promise<void> {
+   const { adminAccessToken, adminRefreshToken } = req.cookies;
 
    try {
-      const validatedAdmin = AuthService.validateAdminToken(token as string);
+      const validatedAdmin = AuthService.validateAdminAccessToken(
+         adminAccessToken as string,
+      );
       req.decodedAdmin = validatedAdmin;
       next();
    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+         try {
+            const validatedAdmin = AuthService.validateAdminRefreshToken(
+               adminRefreshToken as string,
+            );
+            const session = await sessionService.findOne(
+               validatedAdmin.sessionId,
+            );
+
+            if (!session) {
+               res.status(StatusCodes.UNAUTHORIZED).json({
+                  message: 'Unauthorized',
+               });
+               return;
+            }
+
+            const newAccessToken = AuthService.generateAdminAccessToken({
+               ...session,
+               adminId: session.sessionOwnerId,
+               sessionId: session.id,
+            });
+
+            res.cookie('adminAccessToken', newAccessToken, {
+               httpOnly: true,
+               maxAge: 300000,
+            });
+            req.decodedAdmin = validatedAdmin;
+            next();
+            return;
+         } catch (err) {
+            res.status(StatusCodes.UNAUTHORIZED).json({
+               message: 'Unauthorized',
+            });
+            return;
+         }
+      }
+
       res.status(StatusCodes.UNAUTHORIZED).json({
-         message: 'You are not allowed to do this action',
+         message: 'Unauthorized',
       });
    }
 }
