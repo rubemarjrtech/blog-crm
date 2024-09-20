@@ -4,8 +4,14 @@ import { SessionRepository } from '../database/repositories/session.repository';
 export class SessionService {
    constructor(private sessionRepository: SessionRepository) {} // eslint-disable-line
 
-   public async create(userId: number, username: string): Promise<Session> {
-      const newSession = await this.sessionRepository.create(userId, username);
+   public async create(
+      sessionOwnerId: number,
+      username: string,
+   ): Promise<Session> {
+      const newSession = await this.sessionRepository.create(
+         sessionOwnerId,
+         username,
+      );
       return newSession;
    }
 
@@ -14,8 +20,10 @@ export class SessionService {
       return session;
    }
 
-   public async delete(userId: number) {
-      const sessionsDeleted = await this.sessionRepository.delete(userId);
-      return sessionsDeleted;
+   public async delete(
+      sessionOwnerId: number,
+      username: string,
+   ): Promise<void> {
+      await this.sessionRepository.delete(sessionOwnerId, username);
    }
 }

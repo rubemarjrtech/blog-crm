@@ -6,7 +6,7 @@ export class Session {
    id: string;
 
    @Column()
-   userId: number;
+   sessionOwnerId: number;
 
    @Column()
    username: string;
