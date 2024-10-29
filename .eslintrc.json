@@ -15,5 +15,7 @@
       "sourceType": "module"
    },
    "plugins": ["prettier", "@typescript-eslint"],
-   "rules": {}
+   "rules": {
+      "no-useless-constructor": "off"
+   }
 }
