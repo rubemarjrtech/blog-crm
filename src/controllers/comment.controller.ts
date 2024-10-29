@@ -15,7 +15,7 @@ export class CommentController {
          const postId = parseInt(req.params.id);
          const { name, email, url, comment } = req.body;
 
-         await this.commentService.create({
+         const message = await this.commentService.create({
             name,
             email,
             url,
@@ -23,8 +23,14 @@ export class CommentController {
             postId,
          });
 
+         if (!message) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+               message: 'Post not found',
+            });
+         }
+
          return res.status(StatusCodes.CREATED).json({
-            message: 'Comment submitted!',
+            message,
          });
       } catch (err) {
          console.log(err);

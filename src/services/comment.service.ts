@@ -3,7 +3,7 @@ import { CommentRepository } from '../database/repositories/comment.repository';
 import { CommentEntity } from '../entities/comment.entity';
 
 export class CommentService {
-   constructor(private commentRepository: CommentRepository) {} //eslint-disable-line
+   constructor(private commentRepository: CommentRepository) {}
 
    public async create({
       name,
@@ -11,7 +11,7 @@ export class CommentService {
       url,
       comment,
       postId,
-   }: CommentEntity): Promise<string> {
+   }: CommentEntity): Promise<string | null> {
       const newComment = new CommentEntity({
          name,
          email,
@@ -20,9 +20,9 @@ export class CommentService {
          postId,
       });
 
-      await this.commentRepository.create(newComment);
+      const message = await this.commentRepository.create(newComment);
 
-      return 'Comment added successfully!';
+      return message;
    }
 
    public async loadCommentsForPost(

@@ -1,17 +1,31 @@
 import { appDataSource } from '../../data-source';
 import { CommentEntity } from '../../entities/comment.entity';
 import { Comment } from '../models/comment.model';
-import { Status } from '../models/post.model';
+import { Post, Status } from '../models/post.model';
 
-const getCommentRepository = appDataSource.getRepository(Comment);
+const commentRepository = appDataSource.getRepository(Comment);
+const postRepository = appDataSource.getRepository(Post);
 
 export class CommentRepository {
-   constructor(private commentModel = getCommentRepository) {} // eslint-disable-line
+   constructor(
+      private commentModel = commentRepository,
+      private postModel = postRepository,
+   ) {}
 
-   public async create(comment: CommentEntity): Promise<string> {
+   public async create(comment: CommentEntity): Promise<string | null> {
+      const post = await this.postModel.findOneBy({
+         id: comment.postId,
+         status: Status.APPROVED,
+      });
+
+      if (!post) {
+         return null;
+      }
+
       await this.commentModel.save(comment);
 
-      return 'Comment added successfully!';
+      const message = 'Comment added successfully!';
+      return message;
    }
 
    public async loadCommentsForPost(
