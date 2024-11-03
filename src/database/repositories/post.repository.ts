@@ -83,7 +83,7 @@ export class PostRepository {
          .leftJoinAndSelect('post.member', 'member')
          .leftJoinAndSelect('post.comments', 'comments')
          .where('post.id = :id', { id })
-         .andWhere('comments.status = :status', { status: Status.APPROVED })
+         .andWhere('post.status = :status', { status: Status.APPROVED })
          .limit(30)
          .skip((page - 1) * 30)
          .getOne();
