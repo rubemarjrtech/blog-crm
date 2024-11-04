@@ -3,6 +3,8 @@
    "version": "1.0.0",
    "description": "Blog project for managing blog posts and comments",
    "scripts": {
+      "build": "tsc",
+      "start": "npm run build && node ./dist/src/server.js",
       "dev": "ts-node-dev --transpile-only ./src/server.ts",
       "lint": "eslint ./ --fix",
       "seed:run": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d src/data-source.ts"
